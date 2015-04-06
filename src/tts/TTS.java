@@ -12,6 +12,10 @@ public class TTS {
 		voice.allocate();
 	}
 	
+	/**
+	 * Blocking function
+	 * @param str thing to say in English
+	 */
 	public void say(String str) {
 		voice.speak(str);
 	}

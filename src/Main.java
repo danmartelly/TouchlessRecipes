@@ -9,8 +9,8 @@ public class Main {
 		LeapManager leapManager = new LeapManager();
 		TTS tts = new TTS();
 		
-		tts.say("Welcome to Touch less Recipes.");
-		tts.say("Press any key to quit.");
+		//tts.say("Welcome to Touch less Recipes.");
+		//tts.say("Press any key to quit.");
 		
 		try {
 			System.in.read();
