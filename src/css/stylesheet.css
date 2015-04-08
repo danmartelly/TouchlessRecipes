@@ -1,0 +1,15 @@
+.title {
+    -fx-font: 36px serif;
+}
+
+.topPane {
+    -fx-width: 50%;
+}
+
+.sectionHeader {
+    -fx-font: large bold;
+}
+
+.timer {
+    z-index: 5;
+}
