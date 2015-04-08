@@ -1,0 +1,9 @@
+#JSGF V1.0;
+
+/**
+ * JSGF Grammar for Hello World example
+ */
+
+grammar hello;
+
+public <settimer1> = (Set Timer) (10 | 20 | 30 | 40 | 50 | 60| (Minutes);
