@@ -2,14 +2,9 @@ package leap;
 
 import com.sun.javafx.geom.Point2D;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
-import javax.swing.text.html.HTMLDocument.HTMLReader.IsindexAction;
-
 import com.leapmotion.leap.*;
-import com.sun.javafx.scene.traversal.Direction;
-import com.sun.org.apache.bcel.internal.generic.INSTANCEOF;
 
 /**
  * This class listens to the leap hardware to determine when to process the frame data.
@@ -22,16 +17,19 @@ public class LeapManager {
 		NONE,
 		IS_ZOOMING,
 		IS_TURNING_NEXT,
-		IS_TURNING_PREV
+		IS_TURNING_PREV,
+		IS_ROTATING
 	};
 	
 	public enum LEAP_EVENT {
 		START_ZOOM,
-		STOP_ZOOM,
+		END_ZOOM,
 		START_NEXT_PAGE,
 		END_NEXT_PAGE,
 		START_PREV_PAGE,
-		END_PREV_PAGE
+		END_PREV_PAGE,
+		START_ROTATION,
+		END_ROTATION
 	};
 	
 	// zoom variables
@@ -46,6 +44,12 @@ public class LeapManager {
 	protected boolean isSwiping = false;
 	protected int currentGestID = -1;
 	
+	// rotation variables
+	protected boolean isRotating = false;
+	protected Frame rotationRefFrame = null;
+	protected float relativeRotation = 0F;
+	protected Hand rotationRefHand;
+	
 	//other
 	protected Point2D cursorPosition;
 	protected LEAP_STATE currentState = LEAP_STATE.NONE;
@@ -53,6 +57,7 @@ public class LeapManager {
 	public Controller controller;
 	public LeapFrameListener leapListener;
 	protected List<LeapListener> leapListeners;
+	protected boolean timerMode = false;
 	
 	public LeapManager() {
 		controller = new Controller();
@@ -64,12 +69,24 @@ public class LeapManager {
 		controller.addListener(leapListener);
 	}
 	
+	public boolean isTimerMode() {
+		return timerMode;
+	}
+	
+	public void setTimerMode(boolean isTimer) {
+		timerMode = isTimer;
+	}
+	
 	public LEAP_STATE getCurrentState() {
 		return currentState;
 	}
 	
-	public float getCurrentZoomMultiplier() {
+	public float getZoomMultiplier() {
 		return zoomMultiplier;
+	}
+	
+	public float getRotation() {
+		return relativeRotation;
 	}
 	
 	public void addListener(LeapListener listener) {
@@ -98,11 +115,54 @@ public class LeapManager {
 	public void processCurrentFrame() {
 		Frame frame = controller.frame();
 		processFrameForCursor(frame);
+		processFrameForRotation(frame);
 		processFrameForSwipe(frame);
 		processFrameForZooming(frame);
 	}
 	
+	protected void processFrameForRotation(Frame frame) {
+		if (!isTimerMode()) {
+			if (getCurrentState() == LEAP_STATE.IS_ROTATING) {
+				currentState = LEAP_STATE.NONE;
+				fireEvent(LEAP_EVENT.END_ROTATION);
+			}
+			return;
+		}
+		
+		HandList hands = frame.hands();
+		if (getCurrentState() == LEAP_STATE.IS_ROTATING) {
+			if (hands.count() >= 1) {
+				float newRotation = 0.0F;
+				for (int i = 0; i < hands.count(); i++) {
+					Hand hand = hands.get(i);
+					if (hand.id() == rotationRefHand.id() && hand.grabStrength() > .7) {
+						newRotation = hand.rotationAngle(rotationRefFrame, Vector.zAxis());
+					}
+				}
+				if (newRotation == 0.0) {
+					currentState = LEAP_STATE.NONE;
+					fireEvent(LEAP_EVENT.END_ROTATION);
+				} else {
+					relativeRotation = newRotation;
+					System.out.println("relative rotation: " + relativeRotation);
+				}
+			}
+		} else {
+			for (int i = 0; i < hands.count(); i++) {
+				if (hands.get(i).grabStrength() > .7) {
+					rotationRefFrame = frame;
+					rotationRefHand = hands.get(i);
+					currentState = LEAP_STATE.IS_ROTATING;
+					relativeRotation = 0F;
+					fireEvent(LEAP_EVENT.START_ROTATION);
+					return;
+				}
+			}
+		}
+	}
+	
 	protected void processFrameForCursor(Frame frame) {
+		
 		HandList hands = frame.hands();
 		if (hands.count() == 1) {
 			Vector pos;
@@ -124,6 +184,17 @@ public class LeapManager {
 	}
 	
 	protected void processFrameForSwipe(Frame frame) {
+		if (isTimerMode()) {
+			if (getCurrentState() == LEAP_STATE.IS_TURNING_NEXT) {
+				currentState = LEAP_STATE.NONE;
+				fireEvent(LEAP_EVENT.END_NEXT_PAGE);
+			} else if (getCurrentState() == LEAP_STATE.IS_TURNING_PREV) {
+				currentState = LEAP_STATE.NONE;
+				fireEvent(LEAP_EVENT.END_PREV_PAGE);
+			}
+			return;
+		}
+		
 		if (getCurrentState() == LEAP_STATE.NONE) {
 			GestureList gestures = frame.gestures();
 			for (int i = 0; i < gestures.count(); i++) {
@@ -165,6 +236,14 @@ public class LeapManager {
 	}
 	
 	protected void processFrameForZooming(Frame frame) {
+		if (isTimerMode()) {
+			if (getCurrentState() == LEAP_STATE.IS_ZOOMING) {
+				currentState = LEAP_STATE.NONE;
+				fireEvent(LEAP_EVENT.END_ZOOM);
+			}
+			return;
+		}
+		
 		HandList hands = frame.hands();
 		if (getCurrentState() == LEAP_STATE.IS_ZOOMING) {
 			if (isZooming1Hand) {
@@ -175,11 +254,11 @@ public class LeapManager {
 					if (hand.grabStrength() < .7) {
 						isZooming1Hand = false;
 						currentState = LEAP_STATE.NONE;
-						fireEvent(LEAP_EVENT.STOP_ZOOM);
+						fireEvent(LEAP_EVENT.END_ZOOM);
 					}
 				} else {
 					currentState = LEAP_STATE.NONE;
-					fireEvent(LEAP_EVENT.STOP_ZOOM);
+					fireEvent(LEAP_EVENT.END_ZOOM);
 				}
 				
 			} else if (isZooming2Hands) {
@@ -190,7 +269,7 @@ public class LeapManager {
 					zoomMultiplier = distanceBetweenHands/zoomHandDistanceRef;
 				} else {
 					currentState = LEAP_STATE.NONE;
-					fireEvent(LEAP_EVENT.STOP_ZOOM);
+					fireEvent(LEAP_EVENT.END_ZOOM);
 				}
 			} else { // this case shouldn't hit
 				currentState = LEAP_STATE.NONE;

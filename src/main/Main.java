@@ -28,6 +28,7 @@ public class Main {
 		TTS tts = new TTS();
 		
 		Main rand = new Main();
+		leapManager.setTimerMode(true);
 		
 		//TestClass test = rand.new TestClass(leapManager);
 		//leapManager.addListener(test);
