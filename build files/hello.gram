@@ -6,4 +6,7 @@
 
 grammar hello;
 
-public <settimer1> = (Set Timer) (10 | 20 | 30 | 40 | 50 | 60| (Minutes);
+public <settimer1> = (Set Timer) (For | To) ((Ten | Fifteen | Twenty | Thirty | Forty | Forty Five | Fifty | Sixty) (Minutes) | (Half An Hour));
+public <closetimer> = (Close Timer);
+public <pagenavigation> = (Previous | Next) (Page);
+public <gotolink> = (Go To) (Link | This Link | That Link);
