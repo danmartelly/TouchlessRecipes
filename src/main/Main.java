@@ -11,13 +11,14 @@ public class Main {
 	
 	public class TestClass implements LeapListener {
 
-		public TestClass() {
-			
+		LeapManager l;
+		public TestClass(LeapManager l) {
+			this.l = l;
 		}
 		
 		@Override
 		public void eventFired(LEAP_EVENT event) {
-			System.out.println("event fired: " + event);
+			System.out.println("event fired: " + event + "zoom: " + l.getCurrentZoomMultiplier());
 		}
 		
 	}
@@ -27,8 +28,9 @@ public class Main {
 		TTS tts = new TTS();
 		
 		Main rand = new Main();
-		TestClass testLi = rand.new TestClass();
-		leapManager.addListener(LEAP_EVENT.START_ZOOM, testLi);
+		
+		//TestClass test = rand.new TestClass(leapManager);
+		//leapManager.addListener(test);
 		
 		//tts.say("Welcome to Touch less Recipes.");
 		//tts.say("Press any key to quit.");
