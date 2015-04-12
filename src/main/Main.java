@@ -18,7 +18,7 @@ public class Main {
 		
 		@Override
 		public void eventFired(LEAP_EVENT event) {
-			System.out.println("event fired: " + event + "zoom: " + l.getCurrentZoomMultiplier());
+			System.out.println("event fired: " + event + "zoom: " + l.getZoomMultiplier());
 		}
 		
 	}
