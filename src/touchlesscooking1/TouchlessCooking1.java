@@ -49,6 +49,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import recipe.*;
+import tts.TTS;
 
 public class TouchlessCooking1 extends Application {
 
@@ -56,11 +57,12 @@ public class TouchlessCooking1 extends Application {
     int sceneWidth = 600, sceneHeight = 500;
     Stage mainStage;
     List<Recipe> recipes;
-    int pageNumber = 0;
+    int pageNumber = 0, stepIndex = 0, ingredientIndex = 0;
     Map<String, Integer> timeToInt = new HashMap<String, Integer>();
     Pane timerPane = new Pane();
     Pane superRoot = new Pane();
     Thread listener;
+    TTS tts = new TTS();
     
     /**
      * @param args the command line arguments
@@ -131,14 +133,12 @@ public class TouchlessCooking1 extends Application {
         Text time = new Text("" + knobTurn);
         time.setStyle("-fx-font: 30px serif");
         Bounds bounds = time.getLayoutBounds();
-        Rectangle timeBackground = new Rectangle(sceneWidth/2 - bounds.getWidth() + bounds.getMinX(), sceneHeight/2 - radius + bounds.getMinY(), bounds.getMaxX(), bounds.getMaxY());
-        timeBackground.setFill(Color.RED);
-        
+        Rectangle timeBackground = new Rectangle(sceneWidth/2 - radius - bounds.getWidth(), sceneHeight/2 - radius + bounds.getMinY() - bounds.getHeight(), bounds.getWidth() * 3 + radius * 2, bounds.getHeight() + radius * 2 - bounds.getMinY());
+        timeBackground.setFill(Color.WHITE);
         timerPane.getChildren().add(timeBackground);
-        System.out.println(timeBackground);
         
         time.setLayoutX(sceneWidth/2 - bounds.getWidth());
-        time.setLayoutY(sceneHeight/2 - radius);
+        time.setLayoutY(sceneHeight/2 - radius - 2);
         timerPane.getChildren().add(time);
         timerPane.getChildren().add(timerCircle);
         for(int i=0; i < 60; i++){
@@ -151,12 +151,13 @@ public class TouchlessCooking1 extends Application {
         }
         timerPane.getChildren().add(knobCircle);
         timerPane.getChildren().add(knobHandle);
+        
         radius = Math.min(sceneWidth, sceneHeight)/8;
         for(int i=0; i < 24; i++){
             Line tick = new Line(sceneWidth/2 + (Math.cos(knobTurn * 6 / 180.0 * Math.PI + Math.PI*i/12) * radius * 4 / 5), sceneHeight/2 + (Math.sin(knobTurn * 6 / 180.0 * Math.PI + Math.PI*i/12) * radius * 4 / 5), sceneWidth/2 + (Math.cos(knobTurn * 6 / 180.0 * Math.PI + Math.PI*i/12) * radius), sceneHeight/2 + (Math.sin(knobTurn * 6 / 180.0 * Math.PI + Math.PI*i/12) * radius));
             timerPane.getChildren().add(tick);
         }
-        root.getChildren().add(timerPane);
+        //root.getChildren().add(timerPane);
     }
     
     public void handle(String command){
@@ -165,7 +166,9 @@ public class TouchlessCooking1 extends Application {
     }
     
     public void react() {
-        if(newCommand.equals("next page")) {
+        String command = newCommand.substring(0);
+        newCommand  = "";
+        if(command.equals("next page")) {
             if(pageNumber < recipes.size() - 1) {
                 Pane superRoot = new Pane();
                 VBox root = new VBox(15);            
@@ -176,7 +179,7 @@ public class TouchlessCooking1 extends Application {
                 mainStage.setScene(scene);
             }
             superRoot.getChildren().remove(timerPane);
-        } else if(newCommand.equals("previous page")) {
+        } else if(command.equals("previous page")) {
             if(pageNumber > 0) {
                 Pane superRoot = new Pane();
                 VBox root = new VBox(15);
@@ -187,23 +190,29 @@ public class TouchlessCooking1 extends Application {
                 mainStage.setScene(scene);
             }
             superRoot.getChildren().remove(timerPane);
-        } else if(newCommand.startsWith("set timer")) {
-            String[] words = newCommand.split(" ");
+        } else if(command.startsWith("set timer")) {
+            String[] words = command.split(" ");
             String time = words[3];
             time += (words.length == 6) ? " " + words[4] : "";
             System.out.println(time);
             displayTimer(superRoot, timeToInt.get(time));
-            if(superRoot.getChildren().contains(timerPane)) {
+            if(!superRoot.getChildren().contains(timerPane)) {
                 superRoot.getChildren().add(timerPane);
             }
-        }else if(newCommand.equals("close timer")) {
+        } else if(command.equals("close timer")) {
             superRoot.getChildren().remove(timerPane);
-        } else if(newCommand.startsWith("go to")) {
-            String linkPointedTo = newCommand.substring(5);
+        } else if(command.startsWith("go to")) {
+            String linkPointedTo = command.substring(5);
             System.out.println(linkPointedTo);
-            superRoot.getChildren().remove(timerPane);
+        } else if(command.startsWith("read")) {
+            String whatToRead = command.split(" ")[1];
+            Recipe currentRecipe = recipes.get(pageNumber);
+            if(command.endsWith("ingredients")){
+                tts.say(currentRecipe.getIngredients().get(0).toString());
+            } else {
+                tts.say(currentRecipe.getSteps().get(0).toString());
+            }
         }
-        newCommand  = "";
     }
     
     public void renderRecipe(VBox root, Recipe recipe) {
@@ -247,6 +256,15 @@ public class TouchlessCooking1 extends Application {
     }
     
     public void initializeMap() {
+        timeToInt.put("one", 1);
+        timeToInt.put("two", 2);
+        timeToInt.put("three", 3);
+        timeToInt.put("four", 4);
+        timeToInt.put("five", 5);
+        timeToInt.put("six", 6);
+        timeToInt.put("seven", 7);
+        timeToInt.put("eight", 8);
+        timeToInt.put("nine", 9);
         timeToInt.put("ten", 10);
         timeToInt.put("fifteen", 15);
         timeToInt.put("twenty", 20);
@@ -260,6 +278,6 @@ public class TouchlessCooking1 extends Application {
     @Override
     public void stop() throws Exception {
         super.stop();
-        //listener.interrupt();
+        listener.stop();
     }
 }

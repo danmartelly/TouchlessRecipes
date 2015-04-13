@@ -61,4 +61,66 @@
             </step>
         </steps>
     </recipe>
+    <recipe>
+        <title>Apple Crisp</title>
+        <description>
+            Apples, cinnamon, brown sugar, butter and oats? Welcome to the essential ingredients of the apple crisp, one of the most simple and easy of apple desserts. To make an apple crisp one layers sliced peeled apples that have been tossed with lemon juice and vanilla in a baking pan, then tops the apples with a mixture of brown sugar, butter, cinnamon and oats. It’s the crunchy topping that makes the apple crisp “crisp”.
+        </description>
+        <serves>8</serves>
+        <ingredients>
+            <ingredient>
+                <amount>14</amount>
+                <item>tart apples</item>
+                <details>peeled, cored and sliced</details>
+            </ingredient>
+            <ingredient>
+                <amount>8 teaspoons</amount>
+                <item>fresh lemon juice</item>
+                <details></details>
+            </ingredient>
+            <ingredient>
+                <amount>1 teaspoon2</amount>
+                <item>vanilla</item>
+                <details></details>
+            </ingredient>
+            <ingredient>
+                <amount>2 cup</amount>
+                <item>brown sugar</item>
+                <details></details>
+            </ingredient>
+            <ingredient>
+                <amount>1 teaspoons</amount>
+                <item>ground cinnamon</item>
+                <details></details>
+            </ingredient>
+            <ingredient>
+                <amount>2 cups</amount>
+                <item>rolled oats</item>
+                <details></details>
+            </ingredient>
+            <ingredient>
+                <amount>1 cup</amount>
+                <item>butter</item>
+                <details>room temperature</details>
+            </ingredient>
+        </ingredients>
+        <steps>
+            <step>
+                <number>1</number>
+                <text>Preheat oven to 375°F. In a mixing bowl, combine apples, lemon juice, and vanilla. Toss to combine.</text>
+            </step> 
+            <step>
+                <mumber>2</mumber>
+                <text>Layer sliced apples in a 9 x 12-inch (or approximately the same size) baking pan.</text>
+            </step>
+            <step>
+                <mumber>3</mumber>
+                <text>Combine brown sugar, cinnamon, and oatmeal in a bowl. Cut in the butter. Sprinkle sugar mixture over apples.</text>
+            </step>
+            <step>
+                <mumber>4</mumber>
+                <text>Bake 45 minutes or until topping looks crunchy and apples are tender.</text>
+            </step>
+        </steps>
+    </recipe>
 </recipes>
