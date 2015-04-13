@@ -45,6 +45,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import javax.xml.parsers.ParserConfigurationException;
+import leap.LeapManager;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -58,6 +59,7 @@ public class TouchlessCooking1 extends Application {
     Stage mainStage;
     List<Recipe> recipes;
     int pageNumber = 0, stepIndex = 0, ingredientIndex = 0;
+    LeapManager manager;
     Map<String, Integer> timeToInt = new HashMap<String, Integer>();
     Pane timerPane = new Pane();
     Pane superRoot = new Pane();
@@ -75,6 +77,8 @@ public class TouchlessCooking1 extends Application {
     public void start(Stage primaryStage) throws ParserConfigurationException {
         initializeMap();
         mainStage = primaryStage;
+        manager = new LeapManager();
+        manager.setTimerMode(true);
         
         Recipe defaultRecipe;
         
