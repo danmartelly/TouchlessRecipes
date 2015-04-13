@@ -10,12 +10,12 @@ public class LeapFrameListener extends Listener{
 	
 	public void onConnect(Controller controller) {
 		manager.toggleConnected(true);
-		System.out.println("Connected");
+		System.out.println("Leap connected");
 	}
 	
 	public void onDisconnect(Controller controller) {
 		manager.toggleConnected(false);
-		System.out.println("Disconnected");
+		System.out.println("Leap disconnected");
 	}
 	
 	public void onFrame(Controller controller) {

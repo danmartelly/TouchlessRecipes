@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -44,11 +45,17 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+
 import javax.xml.parsers.ParserConfigurationException;
+
 import leap.LeapManager;
+import leap.LeapManager.LEAP_EVENT;
+import leap.LeapManager.LEAP_STATE;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
+
 import recipe.*;
 import tts.TTS;
 
@@ -60,6 +67,8 @@ public class TouchlessCooking1 extends Application {
     List<Recipe> recipes;
     int pageNumber = 0, stepIndex = 0, ingredientIndex = 0;
     LeapManager manager;
+    LeapHandler leapHandler;
+    public LEAP_EVENT lastLeapEvent = null;
     Map<String, Integer> timeToInt = new HashMap<String, Integer>();
     Pane timerPane = new Pane();
     Pane superRoot = new Pane();
@@ -78,7 +87,9 @@ public class TouchlessCooking1 extends Application {
         initializeMap();
         mainStage = primaryStage;
         manager = new LeapManager();
-        manager.setTimerMode(true);
+        manager.setTimerMode(false);
+        leapHandler = new LeapHandler(this);
+        manager.addListener(leapHandler);
         
         Recipe defaultRecipe;
         
@@ -169,31 +180,17 @@ public class TouchlessCooking1 extends Application {
         newCommand = command;
     }
     
+    public void updateLeapEvent(LEAP_EVENT event) {
+    	lastLeapEvent = event;
+    }
+    
     public void react() {
         String command = newCommand.substring(0);
         newCommand  = "";
         if(command.equals("next page")) {
-            if(pageNumber < recipes.size() - 1) {
-                Pane superRoot = new Pane();
-                VBox root = new VBox(15);            
-                renderRecipe(root, recipes.get(++pageNumber));
-                superRoot.getChildren().add(root);
-                Scene scene = new Scene(superRoot, sceneWidth, sceneHeight);
-                scene.getStylesheets().add("/css/stylesheet.css");
-                mainStage.setScene(scene);
-            }
-            superRoot.getChildren().remove(timerPane);
+            goToNextPage();
         } else if(command.equals("previous page")) {
-            if(pageNumber > 0) {
-                Pane superRoot = new Pane();
-                VBox root = new VBox(15);
-                renderRecipe(root, recipes.get(--pageNumber));
-                superRoot.getChildren().add(root);
-                Scene scene = new Scene(superRoot, sceneWidth, sceneHeight);
-                scene.getStylesheets().add("/css/stylesheet.css");
-                mainStage.setScene(scene);
-            }
-            superRoot.getChildren().remove(timerPane);
+            goToPrevPage();
         } else if(command.startsWith("set timer")) {
             String[] words = command.split(" ");
             String time = words[3];
@@ -217,6 +214,45 @@ public class TouchlessCooking1 extends Application {
                 tts.say(currentRecipe.getSteps().get(0).toString());
             }
         }
+        // Leap stuff
+        else if (manager.getCurrentState() == LEAP_STATE.IS_ZOOMING) {
+        	float zoomMultiplier = manager.getZoomMultiplier();
+        } else if (manager.getCurrentState() == LEAP_STATE.IS_ROTATING) {
+        	float rotationDelta = manager.getRotation();
+        } else if (lastLeapEvent != null) {
+        	if (lastLeapEvent == LEAP_EVENT.END_NEXT_PAGE)
+        		goToNextPage();
+        	else if (lastLeapEvent == LEAP_EVENT.END_NEXT_PAGE)
+        		goToPrevPage();
+        	// more leap events possible
+        	lastLeapEvent = null;
+        }
+    }
+    
+    protected void goToNextPage() {
+    	if(pageNumber < recipes.size() - 1) {
+            Pane superRoot = new Pane();
+            VBox root = new VBox(15);            
+            renderRecipe(root, recipes.get(++pageNumber));
+            superRoot.getChildren().add(root);
+            Scene scene = new Scene(superRoot, sceneWidth, sceneHeight);
+            scene.getStylesheets().add("/css/stylesheet.css");
+            mainStage.setScene(scene);
+        }
+        superRoot.getChildren().remove(timerPane);
+    }
+    
+    protected void goToPrevPage() {
+    	if(pageNumber > 0) {
+            Pane superRoot = new Pane();
+            VBox root = new VBox(15);
+            renderRecipe(root, recipes.get(--pageNumber));
+            superRoot.getChildren().add(root);
+            Scene scene = new Scene(superRoot, sceneWidth, sceneHeight);
+            scene.getStylesheets().add("/css/stylesheet.css");
+            mainStage.setScene(scene);
+        }
+        superRoot.getChildren().remove(timerPane);
     }
     
     public void renderRecipe(VBox root, Recipe recipe) {

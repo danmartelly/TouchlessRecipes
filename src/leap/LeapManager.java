@@ -93,7 +93,7 @@ public class LeapManager {
 		leapListeners.add(listener);
 	}
 	
-	public void removeListener(LEAP_EVENT event, LeapListener listener) {
+	public void removeListener(LeapListener listener) {
 		leapListeners.remove(listener);
 	}
 	
@@ -204,10 +204,10 @@ public class LeapManager {
 					currentGestID = gest.id();
 					SwipeGesture swipeGest = new SwipeGesture(gest);
 					Vector dir = swipeGest.direction();
-					if (dir.getX() > .5) {
+					if (dir.getX() < -.5) {
 						currentState = LEAP_STATE.IS_TURNING_NEXT;
 						fireEvent(LEAP_EVENT.START_NEXT_PAGE);
-					} else if (dir.getX() < -.5) {
+					} else if (dir.getX() > .5) {
 						currentState = LEAP_STATE.IS_TURNING_PREV;
 						fireEvent(LEAP_EVENT.START_PREV_PAGE);
 					}

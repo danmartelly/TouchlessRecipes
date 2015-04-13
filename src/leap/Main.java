@@ -1,8 +1,6 @@
-package main;
+package leap;
 import java.io.IOException;
 
-import leap.LeapListener;
-import leap.LeapManager;
 import leap.LeapManager.LEAP_EVENT;
 import tts.TTS;
 
