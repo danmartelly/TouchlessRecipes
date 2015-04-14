@@ -13,6 +13,7 @@ package touchlesscooking1;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -26,6 +27,7 @@ import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
@@ -43,6 +45,7 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
+import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -65,6 +68,8 @@ public class TouchlessCooking1 extends Application {
     int sceneWidth = 600, sceneHeight = 500;
     Stage mainStage;
     List<Recipe> recipes;
+    List<Node> nodes = new ArrayList<Node>();
+    boolean timerShowing = false;
     int pageNumber = 0, stepIndex = 0, ingredientIndex = 0;
     LeapManager manager;
     LeapHandler leapHandler;
@@ -108,6 +113,7 @@ public class TouchlessCooking1 extends Application {
         
         renderRecipe(root, defaultRecipe);
         
+        this.nodes.add(root);
         superRoot.getChildren().add(root);
         displayTimer(superRoot, 0);
         Scene scene = new Scene(superRoot, sceneWidth, sceneHeight);
@@ -172,7 +178,6 @@ public class TouchlessCooking1 extends Application {
             Line tick = new Line(sceneWidth/2 + (Math.cos(knobTurn * 6 / 180.0 * Math.PI + Math.PI*i/12) * radius * 4 / 5), sceneHeight/2 + (Math.sin(knobTurn * 6 / 180.0 * Math.PI + Math.PI*i/12) * radius * 4 / 5), sceneWidth/2 + (Math.cos(knobTurn * 6 / 180.0 * Math.PI + Math.PI*i/12) * radius), sceneHeight/2 + (Math.sin(knobTurn * 6 / 180.0 * Math.PI + Math.PI*i/12) * radius));
             timerPane.getChildren().add(tick);
         }
-        //root.getChildren().add(timerPane);
     }
     
     public void handle(String command){
@@ -189,6 +194,13 @@ public class TouchlessCooking1 extends Application {
         newCommand  = "";
         if(command.equals("next page")) {
             goToNextPage();
+            for(Node node: nodes) {
+                //node.setScaleX(2);
+                node.setScaleY(2);
+            }
+            superRoot.setScaleY(2);
+            superRoot.requestLayout();
+            superRoot.setScaleX(superRoot.getScaleX() * 2);
         } else if(command.equals("previous page")) {
             goToPrevPage();
         } else if(command.startsWith("set timer")) {
@@ -199,26 +211,54 @@ public class TouchlessCooking1 extends Application {
             displayTimer(superRoot, timeToInt.get(time));
             if(!superRoot.getChildren().contains(timerPane)) {
                 superRoot.getChildren().add(timerPane);
+                timerShowing = true;
             }
         } else if(command.equals("close timer")) {
             superRoot.getChildren().remove(timerPane);
+            timerShowing = false;
         } else if(command.startsWith("go to")) {
             String linkPointedTo = command.substring(5);
             System.out.println(linkPointedTo);
         } else if(command.startsWith("read")) {
-            String whatToRead = command.split(" ")[1];
+            String[] whatToRead = command.split(" ");
             Recipe currentRecipe = recipes.get(pageNumber);
-            if(command.endsWith("ingredients")){
-                tts.say(currentRecipe.getIngredients().get(0).toString());
+            if(whatToRead.length < 3) {
+                if(command.endsWith("ingredients")){
+                    tts.say(currentRecipe.getIngredients().get(stepIndex).toString());
+                    if(stepIndex < currentRecipe.getIngredients().size() - 1)
+                        stepIndex++;
+                } else {
+                    tts.say(currentRecipe.getSteps().get(ingredientIndex).toString());
+                    if(ingredientIndex < currentRecipe.getIngredients().size() - 1)
+                        ingredientIndex++;
+                }
             } else {
-                tts.say(currentRecipe.getSteps().get(0).toString());
+                if(command.endsWith("ingredient")){
+                    tts.say(currentRecipe.getIngredients().get(stepIndex).toString());
+                    if(stepIndex < currentRecipe.getIngredients().size() - 1)
+                        stepIndex++;
+                } else {
+                    tts.say(currentRecipe.getSteps().get(ingredientIndex).toString());
+                    if(ingredientIndex < currentRecipe.getIngredients().size() - 1)
+                        ingredientIndex++;
+                }
             }
+            superRoot.getChildren().remove(timerPane);
+            timerShowing = false;
         }
         // Leap stuff
-        else if (manager.getCurrentState() == LEAP_STATE.IS_ZOOMING) {
-        	float zoomMultiplier = manager.getZoomMultiplier();
+        if (manager.getCurrentState() == LEAP_STATE.IS_ZOOMING) {
+            float zoomMultiplier = manager.getZoomMultiplier();
+            for(Node node: nodes) {
+                node.setScaleX(zoomMultiplier);
+                node.setScaleY(zoomMultiplier);
+            }
         } else if (manager.getCurrentState() == LEAP_STATE.IS_ROTATING) {
         	float rotationDelta = manager.getRotation();
+                if(timerShowing) {
+                    //double modulusAngle = rotationDelta % Math.PI;
+                    displayTimer(superRoot, (int)(rotationDelta / Math.PI * 180));
+                }
         } else if (lastLeapEvent != null) {
         	if (lastLeapEvent == LEAP_EVENT.END_NEXT_PAGE)
         		goToNextPage();
@@ -240,6 +280,7 @@ public class TouchlessCooking1 extends Application {
             mainStage.setScene(scene);
         }
         superRoot.getChildren().remove(timerPane);
+        timerShowing = false;
     }
     
     protected void goToPrevPage() {
@@ -253,15 +294,18 @@ public class TouchlessCooking1 extends Application {
             mainStage.setScene(scene);
         }
         superRoot.getChildren().remove(timerPane);
+        timerShowing = false;
     }
     
     public void renderRecipe(VBox root, Recipe recipe) {
         Text title = new Text(recipe.getTitle());
+        nodes.add(title);
         title.getStyleClass().add("title");
         HBox top = new HBox();
         VBox topLeft = new VBox(10);
         topLeft.getChildren().add(title);
         Text desc = new Text(recipe.getDescription());
+        nodes.add(desc);
         desc.setWrappingWidth(300);
         topLeft.getChildren().add(desc);
         topLeft.getChildren().add(new Text("Serves " + recipe.getServes()));
@@ -271,23 +315,30 @@ public class TouchlessCooking1 extends Application {
         //File images = new File("images/eggs.jpg");
         Image image = new Image("images/eggs.jpg");
         ImageView finalImage = new ImageView(image);
+        nodes.add(finalImage);
         finalImage.getStyleClass().add("topPane");
         top.getChildren().add(finalImage);
         
         Text ingredientHeader = new Text("Ingredients");
+        nodes.add(ingredientHeader);
         ingredientHeader.getStyleClass().add("sectionHeader");
         VBox ingredientsPane = new VBox();
         List<Ingredient> recipeIngredients = recipe.getIngredients();
         recipeIngredients.stream().forEach((i) -> {
-            ingredientsPane.getChildren().add(new Text(i.toString()));
+            Text ingredient = new Text(i.toString());
+            nodes.add(ingredient);
+            ingredientsPane.getChildren().add(ingredient);
         });
         
         Text stepHeader = new Text("Steps");
+        nodes.add(stepHeader);
         stepHeader.getStyleClass().add("sectionHeader");
         VBox stepsPane = new VBox();
         List<Step> recipeSteps = recipe.getSteps();
         recipeSteps.stream().forEach((s) -> {
-            stepsPane.getChildren().add(new Text(s.toString()));
+            Text step = new Text(s.toString());
+            nodes.add(step);
+            stepsPane.getChildren().add(step);
         });
         
         root.getChildren().add(top);
@@ -309,6 +360,7 @@ public class TouchlessCooking1 extends Application {
         timeToInt.put("fifteen", 15);
         timeToInt.put("twenty", 20);
         timeToInt.put("thirty", 30);
+        timeToInt.put("half an", 30);
         timeToInt.put("forty", 40);
         timeToInt.put("forty five", 45);
         timeToInt.put("fifty", 50);
