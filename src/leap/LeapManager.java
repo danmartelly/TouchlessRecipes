@@ -257,7 +257,7 @@ public class LeapManager {
 				if (hands.count() == 1) {
 					Hand hand = hands.get(0);
 					zoomMultiplier = prevZoomMultiplier * (float) Math.max(0.3, 1. - (zoomGrabRef.getZ() - hand.palmPosition().getZ())*zoomGrabSensitivity);
-					if (hand.grabStrength() < .7) {
+					if (hand.grabStrength() < .7 || hand.pointables().extended().count() > 0) {
 						isZooming1Hand = false;
 						currentState = LEAP_STATE.NONE;
 						fireEvent(LEAP_EVENT.END_ZOOM);
@@ -269,9 +269,11 @@ public class LeapManager {
 				
 			} else if (isZooming2Hands) {
 				if (hands.count() == 2) {
-					Hand hand1 = hands.get(0);
-					Hand hand2 = hands.get(1);
-					float distanceBetweenHands = hand1.palmPosition().distanceTo(hand2.palmPosition());
+					Vector pos1 = hands.get(0).palmPosition();
+					Vector pos2 = hands.get(1).palmPosition();
+					pos1.setZ(0);
+					pos2.setZ(0);
+					float distanceBetweenHands = pos1.distanceTo(pos2);
 					zoomMultiplier = prevZoomMultiplier * distanceBetweenHands/zoomHandDistanceRef;
 				} else {
 					currentState = LEAP_STATE.NONE;
@@ -286,7 +288,7 @@ public class LeapManager {
 			// zooming using 1 hand
 			if (hands.count() == 1) {
 				Hand hand = hands.get(0);
-				if (hand.grabStrength() > .7) {
+				if (hand.grabStrength() > .7 && hand.pointables().extended().count() == 0) {
 					isZooming1Hand = true;
 					zoomGrabRef = hand.palmPosition();
 					prevZoomMultiplier = zoomMultiplier;
