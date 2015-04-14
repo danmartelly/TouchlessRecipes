@@ -56,6 +56,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
+import com.sun.javafx.geom.Point2D;
+
 import recipe.*;
 import tts.TTS;
 
@@ -74,6 +76,8 @@ public class TouchlessCooking1 extends Application {
     Pane superRoot = new Pane();
     Thread listener;
     TTS tts = new TTS();
+    Rectangle cursorNode;
+    final float cursorOpacity = .3F;
     
     /**
      * @param args the command line arguments
@@ -108,7 +112,12 @@ public class TouchlessCooking1 extends Application {
         
         renderRecipe(root, defaultRecipe);
         
+        //cursor
+        cursorNode = new Rectangle(0,0,10,10);
+        cursorNode.setFill(Color.DODGERBLUE);
+        
         superRoot.getChildren().add(root);
+        superRoot.getChildren().add(cursorNode);
         displayTimer(superRoot, 0);
         Scene scene = new Scene(superRoot, sceneWidth, sceneHeight);
         scene.getStylesheets().add("/css/stylesheet.css");
@@ -123,6 +132,7 @@ public class TouchlessCooking1 extends Application {
         ));
         timer.setCycleCount(Animation.INDEFINITE);
         timer.play();
+        
     }
     
     public void displayTimer(Pane root, int knobTurn) {
@@ -226,6 +236,16 @@ public class TouchlessCooking1 extends Application {
         		goToPrevPage();
         	// more leap events possible
         	lastLeapEvent = null;
+        }
+        
+        // visibility of cursor
+        Point2D cursorPos = manager.getCursorPosition();
+        if (cursorPos != null) {
+        	cursorNode.setOpacity(cursorOpacity);
+        	cursorNode.setX(cursorPos.x);
+        	cursorNode.setY(cursorPos.y);
+        } else {
+        	cursorNode.setOpacity(0);
         }
     }
     
