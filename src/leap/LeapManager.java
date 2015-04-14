@@ -39,6 +39,7 @@ public class LeapManager {
 	protected boolean isZooming2Hands = false;
 	protected float zoomHandDistanceRef = -1F;
 	protected float zoomMultiplier = 1F;
+	protected float prevZoomMultiplier;
 	
 	// turn page variables
 	protected boolean isSwiping = false;
@@ -107,7 +108,6 @@ public class LeapManager {
 	}
 	
 	public Point2D getCursorPosition() {
-		System.out.println(cursorPosition);
 		return cursorPosition;
 	}
 	
@@ -256,7 +256,7 @@ public class LeapManager {
 				// zooming using 1 hand
 				if (hands.count() == 1) {
 					Hand hand = hands.get(0);
-					zoomMultiplier = (float) Math.max(0.3, 1. - (zoomGrabRef.getZ() - hand.palmPosition().getZ())*zoomGrabSensitivity);
+					zoomMultiplier = prevZoomMultiplier * (float) Math.max(0.3, 1. - (zoomGrabRef.getZ() - hand.palmPosition().getZ())*zoomGrabSensitivity);
 					if (hand.grabStrength() < .7) {
 						isZooming1Hand = false;
 						currentState = LEAP_STATE.NONE;
@@ -272,7 +272,7 @@ public class LeapManager {
 					Hand hand1 = hands.get(0);
 					Hand hand2 = hands.get(1);
 					float distanceBetweenHands = hand1.palmPosition().distanceTo(hand2.palmPosition());
-					zoomMultiplier = distanceBetweenHands/zoomHandDistanceRef;
+					zoomMultiplier = prevZoomMultiplier * distanceBetweenHands/zoomHandDistanceRef;
 				} else {
 					currentState = LEAP_STATE.NONE;
 					fireEvent(LEAP_EVENT.END_ZOOM);
@@ -283,14 +283,13 @@ public class LeapManager {
 		} else {
 			isZooming1Hand = false;
 			isZooming2Hands = false;
-			zoomMultiplier = 1F;
 			// zooming using 1 hand
 			if (hands.count() == 1) {
 				Hand hand = hands.get(0);
 				if (hand.grabStrength() > .7) {
 					isZooming1Hand = true;
 					zoomGrabRef = hand.palmPosition();
-					
+					prevZoomMultiplier = zoomMultiplier;
 				}
 			}
 			// zooming using 2 hands
@@ -300,6 +299,7 @@ public class LeapManager {
 				Hand hand2 = hands.get(1);
 				float distanceBetweenHands = hand1.palmPosition().distanceTo(hand2.palmPosition());
 				zoomHandDistanceRef = distanceBetweenHands;
+				prevZoomMultiplier = zoomMultiplier;
 			}
 			
 			if (isZooming1Hand || isZooming2Hands) {
