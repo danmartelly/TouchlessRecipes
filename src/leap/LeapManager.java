@@ -52,6 +52,9 @@ public class LeapManager {
 	
 	//other
 	protected Point2D cursorPosition;
+	protected final float cursorXOrigin = -190;
+	protected final float cursorYOrigin = 200;
+	protected final float cursorSensitvity = 2.5f;
 	protected LEAP_STATE currentState = LEAP_STATE.NONE;
 	protected boolean isConnected = false;
 	public Controller controller;
@@ -104,6 +107,7 @@ public class LeapManager {
 	}
 	
 	public Point2D getCursorPosition() {
+		System.out.println(cursorPosition);
 		return cursorPosition;
 	}
 	
@@ -177,7 +181,9 @@ public class LeapManager {
 			} else {
 				pos = hand.palmPosition();
 			}
-			cursorPosition = new Point2D(pos.getX(), pos.getY());
+			float x = cursorXOrigin + (pos.getX() - cursorXOrigin)*cursorSensitvity;
+			float y = cursorYOrigin + (cursorYOrigin - pos.getY())*cursorSensitvity;
+			cursorPosition = new Point2D(x, y);
 		} else {
 			cursorPosition = null;
 		}
