@@ -204,13 +204,13 @@ public class TouchlessCooking1 extends Application {
         newCommand  = "";
         if(command.equals("next page")) {
             goToNextPage();
-            for(Node node: nodes) {
+            /*for(Node node: nodes) {
                 //node.setScaleX(2);
                 node.setScaleY(2);
             }
             superRoot.setScaleY(2);
             superRoot.requestLayout();
-            superRoot.setScaleX(superRoot.getScaleX() * 2);
+            superRoot.setScaleX(superRoot.getScaleX() * 2);*/
         } else if(command.equals("previous page")) {
             goToPrevPage();
         } else if(command.startsWith("set timer")) {
@@ -255,6 +255,12 @@ public class TouchlessCooking1 extends Application {
             }
             superRoot.getChildren().remove(timerPane);
             timerShowing = false;
+        } else if(command.equals("open timer")) {
+        	displayTimer(superRoot, 0);
+            if(!superRoot.getChildren().contains(timerPane)) {
+                superRoot.getChildren().add(timerPane);
+                timerShowing = true;
+            }
         }
         // Leap stuff
         if (manager.getCurrentState() == LEAP_STATE.IS_ZOOMING) {
@@ -272,7 +278,7 @@ public class TouchlessCooking1 extends Application {
         } else if (lastLeapEvent != null) {
         	if (lastLeapEvent == LEAP_EVENT.END_NEXT_PAGE)
         		goToNextPage();
-        	else if (lastLeapEvent == LEAP_EVENT.END_NEXT_PAGE)
+        	else if (lastLeapEvent == LEAP_EVENT.END_PREV_PAGE)
         		goToPrevPage();
         	// more leap events possible
         	lastLeapEvent = null;
