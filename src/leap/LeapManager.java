@@ -43,7 +43,7 @@ public class LeapManager {
 	protected float zoomHandDistanceRef = -1F;
 	protected float zoomMultiplier = 1F;
 	protected float prevZoomMultiplier;
-	protected float zoom2HandZBuffer = 50;
+	protected float zoom2HandZBuffer = 80;
 	//protected float zoom2HandSensitivity = .5F;
 	
 	// turn page variables
@@ -52,7 +52,7 @@ public class LeapManager {
 	protected List<Integer> pointableVelocityIdList;
 	protected int swipeCurrentFrameCount = 0;
 	protected int frameCountBeforeSwipeEnd = 30;
-	protected int velocitiesToTrack = 20;
+	protected int velocitiesToTrack = 15;
 	protected float minSwipeVelocity = 900;
 	protected int currentGestID = -1;
 	
