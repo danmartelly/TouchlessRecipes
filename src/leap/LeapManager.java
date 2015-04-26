@@ -52,8 +52,8 @@ public class LeapManager {
 	protected List<Integer> pointableVelocityIdList;
 	protected int swipeCurrentFrameCount = 0;
 	protected int frameCountBeforeSwipeEnd = 30;
-	protected int velocitiesToTrack = 15;
-	protected float minSwipeVelocity = 600;
+	protected int velocitiesToTrack = 20;
+	protected float minSwipeVelocity = 900;
 	protected int currentGestID = -1;
 	
 	// rotation variables
@@ -152,7 +152,7 @@ public class LeapManager {
 				float newRotation = 0.0F;
 				for (int i = 0; i < hands.count(); i++) {
 					Hand hand = hands.get(i);
-					if (hand.id() == rotationRefHand.id() && hand.grabStrength() > .7) {
+					if (hand.id() == rotationRefHand.id() && hand.pinchStrength() > .7) {
 						newRotation = hand.rotationAngle(rotationRefFrame, Vector.zAxis());
 					}
 				}
@@ -166,7 +166,7 @@ public class LeapManager {
 			}
 		} else {
 			for (int i = 0; i < hands.count(); i++) {
-				if (hands.get(i).grabStrength() > .7) {
+				if (hands.get(i).pinchStrength() > .7) {
 					rotationRefFrame = frame;
 					rotationRefHand = hands.get(i);
 					currentState = LEAP_STATE.IS_ROTATING;
@@ -324,7 +324,7 @@ public class LeapManager {
 				if (hands.count() == 1) {
 					Hand hand = hands.get(0);
 					zoomMultiplier = prevZoomMultiplier * (float) Math.max(0.3, 1. - (zoomGrabRef.getZ() - hand.palmPosition().getZ())*zoomGrabSensitivity);
-					if (hand.grabStrength() < .7 || hand.pointables().extended().count() > 0) {
+					if (hand.pinchStrength() < .7 || hand.pointables().extended().count() > 0) {
 						isZooming1Hand = false;
 						currentState = LEAP_STATE.NONE;
 						fireEvent(LEAP_EVENT.END_ZOOM);
@@ -360,7 +360,7 @@ public class LeapManager {
 			// zooming using 1 hand
 			if (hands.count() == 1) {
 				Hand hand = hands.get(0);
-				if (hand.grabStrength() > .7 && hand.pointables().extended().count() == 0) {
+				if (hand.pinchStrength() > .7 && hand.pointables().extended().count() == 0) {
 					isZooming1Hand = true;
 					zoomGrabRef = hand.palmPosition();
 					prevZoomMultiplier = zoomMultiplier;
