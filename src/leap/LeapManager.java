@@ -43,6 +43,8 @@ public class LeapManager {
 	protected float zoomHandDistanceRef = -1F;
 	protected float zoomMultiplier = 1F;
 	protected float prevZoomMultiplier;
+	protected float zoom2HandZBuffer = 50;
+	//protected float zoom2HandSensitivity = .5F;
 	
 	// turn page variables
 	protected boolean isSwiping = false;
@@ -336,10 +338,15 @@ public class LeapManager {
 				if (hands.count() == 2) {
 					Vector pos1 = hands.get(0).palmPosition();
 					Vector pos2 = hands.get(1).palmPosition();
-					pos1.setZ(0);
-					pos2.setZ(0);
-					float distanceBetweenHands = pos1.distanceTo(pos2);
-					zoomMultiplier = prevZoomMultiplier * distanceBetweenHands/zoomHandDistanceRef;
+					if (Math.abs(pos1.getZ()) < zoom2HandZBuffer && Math.abs(pos2.getZ()) < zoom2HandZBuffer) {
+						pos1.setZ(0);
+						pos2.setZ(0);
+						float distanceBetweenHands = pos1.distanceTo(pos2);
+						zoomMultiplier = prevZoomMultiplier * distanceBetweenHands/zoomHandDistanceRef;
+					} else {
+						currentState = LEAP_STATE.NONE;
+						fireEvent(LEAP_EVENT.END_ZOOM);
+					}
 				} else {
 					currentState = LEAP_STATE.NONE;
 					fireEvent(LEAP_EVENT.END_ZOOM);
@@ -361,12 +368,16 @@ public class LeapManager {
 			}
 			// zooming using 2 hands
 			else if (hands.count() == 2) {
-				isZooming2Hands = true;
-				Hand hand1 = hands.get(0);
-				Hand hand2 = hands.get(1);
-				float distanceBetweenHands = hand1.palmPosition().distanceTo(hand2.palmPosition());
-				zoomHandDistanceRef = distanceBetweenHands;
-				prevZoomMultiplier = zoomMultiplier;
+				Vector vec1 = hands.get(0).palmPosition();
+				Vector vec2 = hands.get(1).palmPosition();
+				if (Math.abs(vec1.getZ()) < zoom2HandZBuffer && Math.abs(vec2.getZ()) < zoom2HandZBuffer) {
+					isZooming2Hands = true;
+					vec1.setZ(0);
+					vec2.setZ(0);
+					float distanceBetweenHands = vec1.distanceTo(vec2);
+					zoomHandDistanceRef = distanceBetweenHands;
+					prevZoomMultiplier = zoomMultiplier;
+				}
 			}
 			
 			if (isZooming1Hand || isZooming2Hands) {
