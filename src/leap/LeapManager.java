@@ -1,7 +1,10 @@
 package leap;
 
 import com.sun.javafx.geom.Point2D;
+
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 
 import com.leapmotion.leap.*;
@@ -43,6 +46,12 @@ public class LeapManager {
 	
 	// turn page variables
 	protected boolean isSwiping = false;
+	protected HashMap<Integer, List<Vector>> pointableVelocityLists; // id is the int
+	protected List<Integer> pointableVelocityIdList;
+	protected int swipeCurrentFrameCount = 0;
+	protected int frameCountBeforeSwipeEnd = 30;
+	protected int velocitiesToTrack = 15;
+	protected float minSwipeVelocity = 600;
 	protected int currentGestID = -1;
 	
 	// rotation variables
@@ -65,7 +74,9 @@ public class LeapManager {
 	
 	public LeapManager() {
 		controller = new Controller();
-		controller.enableGesture(Gesture.Type.TYPE_SWIPE);
+		//controller.enableGesture(Gesture.Type.TYPE_SWIPE);
+		pointableVelocityLists = new HashMap<Integer, List<Vector>>();
+		pointableVelocityIdList = new ArrayList<Integer>();
 		leapListener = new LeapFrameListener(this);
 		
 		leapListeners = new ArrayList<LeapListener>();
@@ -191,6 +202,7 @@ public class LeapManager {
 	
 	protected void processFrameForSwipe(Frame frame) {
 		if (isTimerMode()) {
+			isSwiping = false;
 			if (getCurrentState() == LEAP_STATE.IS_TURNING_NEXT) {
 				currentState = LEAP_STATE.NONE;
 				fireEvent(LEAP_EVENT.END_NEXT_PAGE);
@@ -201,44 +213,97 @@ public class LeapManager {
 			return;
 		}
 		
-		if (getCurrentState() == LEAP_STATE.NONE) {
-			GestureList gestures = frame.gestures();
-			for (int i = 0; i < gestures.count(); i++) {
-				Gesture gest = gestures.get(i);
-				if (gest.type() == Gesture.Type.TYPE_SWIPE) {
-					isSwiping = true;
-					currentGestID = gest.id();
-					SwipeGesture swipeGest = new SwipeGesture(gest);
-					Vector dir = swipeGest.direction();
-					if (dir.getX() < -.5) {
-						currentState = LEAP_STATE.IS_TURNING_NEXT;
-						fireEvent(LEAP_EVENT.START_NEXT_PAGE);
-					} else if (dir.getX() > .5) {
-						currentState = LEAP_STATE.IS_TURNING_PREV;
-						fireEvent(LEAP_EVENT.START_PREV_PAGE);
-					}
-				}
-			}
-		} else if (isSwiping) {
-			boolean foundCurrentGesture = false;
-			GestureList gestures = frame.gestures();
-			for (int i = 0; i < gestures.count(); i++) {
-				Gesture gest = gestures.get(i);
-				if (gest.id() == currentGestID) {
-					foundCurrentGesture = true;
-				}
-			}
-			if (!foundCurrentGesture) {
-				isSwiping = false;
-				LEAP_STATE prevState = getCurrentState();
-				currentState = LEAP_STATE.NONE;
-				if (prevState == LEAP_STATE.IS_TURNING_NEXT) {
-					fireEvent(LEAP_EVENT.END_NEXT_PAGE);
+		// update velocities and include new ids
+		HandList hands = frame.hands();
+		List<Integer> allPointIds = new ArrayList<Integer>(); 
+		for (int i = 0; i < hands.count(); i++) {
+			Hand hand = hands.get(i);
+			PointableList points = hand.pointables();
+			for (int j = 0; j < points.count(); j++) {
+				Pointable p = points.get(j);
+				allPointIds.add(p.id());
+				if (pointableVelocityLists.containsKey(p.id())) {
+					List<Vector> velList = pointableVelocityLists.get(p.id());
+					if (velList.size() > velocitiesToTrack)
+						velList.remove(0);
+					velList.add(p.tipVelocity());
 				} else {
-					fireEvent(LEAP_EVENT.END_PREV_PAGE);
+					pointableVelocityIdList.add(p.id());
+					List<Vector> newList = new LinkedList<Vector>();
+					newList.add(p.tipVelocity());
+					pointableVelocityLists.put(p.id(), newList);
 				}
 			}
 		}
+		
+		// remove old ids
+		for (int i = 0; i < pointableVelocityIdList.size(); i++) {
+			int id = pointableVelocityIdList.get(i);
+			if (!allPointIds.contains(id)) {
+				pointableVelocityLists.remove(id);
+				pointableVelocityIdList.remove(i);
+			}
+		}
+		
+		if (getCurrentState() != LEAP_STATE.NONE &&
+			getCurrentState() != LEAP_STATE.IS_TURNING_NEXT &&
+			getCurrentState() != LEAP_STATE.IS_TURNING_PREV) {
+			isSwiping = false;
+			return;
+		}
+		
+		if (isSwiping) {
+			swipeCurrentFrameCount++;
+			if (swipeCurrentFrameCount > frameCountBeforeSwipeEnd) {
+				if (getCurrentState() == LEAP_STATE.IS_TURNING_NEXT) {
+					currentState = LEAP_STATE.NONE;
+					fireEvent(LEAP_EVENT.END_NEXT_PAGE);
+					isSwiping = false;
+				} else if (getCurrentState() == LEAP_STATE.IS_TURNING_PREV) {
+					currentState = LEAP_STATE.NONE;
+					fireEvent(LEAP_EVENT.END_PREV_PAGE);
+					isSwiping = false;
+				}
+			}
+			return;
+		}
+		
+		// see if any velocities are above a threshold
+		for (int i = 0; i < pointableVelocityIdList.size(); i++) {
+			int id = pointableVelocityIdList.get(i);
+			List<Vector> velList = pointableVelocityLists.get(id);
+			if (velList.size() >= velocitiesToTrack) {
+				Vector sum = new Vector();
+				for (int j = 0; j < velList.size(); j++) {
+					sum = sum.plus(velList.get(j));
+				}
+				sum = sum.times((float) (1./velList.size()));
+				Vector normalized = sum.normalized();
+				if (!isSwiping) {
+					if (sum.magnitude() > minSwipeVelocity) {
+						if (normalized.getX() < -.5) {
+							isSwiping = true;
+							currentState = LEAP_STATE.IS_TURNING_NEXT;
+							fireEvent(LEAP_EVENT.START_NEXT_PAGE);
+							clearSwipeData();
+							return;
+						} else if (normalized.getX() > .5) {
+							isSwiping = true;
+							currentState = LEAP_STATE.IS_TURNING_PREV;
+							fireEvent(LEAP_EVENT.START_PREV_PAGE);
+							clearSwipeData();
+							return;
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	protected void clearSwipeData() {
+		pointableVelocityLists.clear();
+		pointableVelocityIdList.clear();
+		swipeCurrentFrameCount = 0;
 	}
 	
 	protected void processFrameForZooming(Frame frame) {
