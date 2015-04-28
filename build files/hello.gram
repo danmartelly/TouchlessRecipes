@@ -9,6 +9,7 @@ grammar hello;
 public <settimer1> = (Set Timer) (For | To) ((Ten | Fifteen | Twenty | Thirty | Forty | Forty Five | Fifty | Sixty) (Minutes) | (Half An Hour) (An Hour));
 public <closetimer> = (Close Timer);
 public <opentimer> = (Open Timer);
+public <gotolink> = (Go To Link);
 public <pagenavigation> = (Previous | Next) (Page);
 public <repeat> = (Repeat);
 public <readindividual> = (Read) (Previous | Next);

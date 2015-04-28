@@ -76,7 +76,7 @@ public class TouchlessCooking1 extends Application {
     Stage mainStage;
     List<Recipe> recipes;
     List<Text> nodes = new ArrayList<Text>();
-    boolean timerShowing = false;
+    boolean timerShowing = false, tableofcontents = true;
     int pageNumber = 0, readIndex = 0;
     LeapManager manager;
     LeapHandler leapHandler;
@@ -124,9 +124,11 @@ public class TouchlessCooking1 extends Application {
         //renderRecipe(root, pageNumber);
         for(int i = 0; i < recipes.size(); i++) {
             Hyperlink link = new Hyperlink(recipes.get(i).getTitle());
+            link.setFont(new Font(36));
             link.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent e) {
+                    tableofcontents = false;
                     setRecipe(link.getText());
                 }
             });
@@ -243,6 +245,8 @@ public class TouchlessCooking1 extends Application {
                     tts.say(currentRecipe.getSteps().get(readIndex).toString());
                     break;
             }
+        } else if(command.startsWith("go to")){
+            
         } else if(command.startsWith("read")) {
             String whatToRead = command.split(" ")[1];
             Recipe currentRecipe = recipes.get(pageNumber / 3);
@@ -327,6 +331,33 @@ public class TouchlessCooking1 extends Application {
             }
             superRoot.getChildren().remove(timerPane);
             timerShowing = false;
+        } else if(command.equals("table of contents")) {
+            tableofcontents = true;
+            Pane superRoot = new Pane();
+            VBox root = new VBox(15);
+
+            for(int i = 0; i < recipes.size(); i++) {
+                Hyperlink link = new Hyperlink(recipes.get(i).getTitle());
+                link.setFont(new Font(36));
+                link.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent e) {
+                        tableofcontents = false;
+                        setRecipe(link.getText());
+                    }
+                });
+                root.getChildren().add(link);
+            }
+            //cursor
+            cursorNode = new Rectangle(0,0,10,10);
+            cursorNode.setFill(Color.DODGERBLUE);
+
+            superRoot.getChildren().add(root);
+            superRoot.getChildren().add(cursorNode);
+            
+            Scene scene = new Scene(superRoot, sceneWidth, sceneHeight);
+            scene.getStylesheets().add("/css/stylesheet.css");
+            mainStage.setScene(scene);
         }
         // Leap stuff
         if (manager.getCurrentState() == LEAP_STATE.IS_ZOOMING) {
@@ -362,7 +393,17 @@ public class TouchlessCooking1 extends Application {
     
     protected void goToNextPage() {
         readIndex = 0;
-    	if(pageNumber < recipes.size()*3 - 1) {
+        if(tableofcontents) {
+            tableofcontents = false;
+            pageNumber = 0;
+            Pane superRoot = new Pane();
+            VBox root = new VBox(15);            
+            renderRecipe(root, pageNumber);
+            superRoot.getChildren().add(root);
+            Scene scene = new Scene(superRoot, sceneWidth, sceneHeight);
+            scene.getStylesheets().add("/css/stylesheet.css");
+            mainStage.setScene(scene);
+        } else if(pageNumber < recipes.size()*3 - 1) {
             pageNumber++;
             Recipe currentRecipe = recipes.get(pageNumber / 3);
             switch(pageNumber % 3) {
@@ -387,7 +428,7 @@ public class TouchlessCooking1 extends Application {
     
     protected void goToPrevPage() {
     	readIndex = 0;
-        if(pageNumber > 0) {
+        if(pageNumber > 0 && !tableofcontents) {
             pageNumber--;
             Recipe currentRecipe = recipes.get(pageNumber / 3);
             switch(pageNumber % 3) {
@@ -442,8 +483,8 @@ public class TouchlessCooking1 extends Application {
                 System.out.println("Ingredients");
                 Text ingredientHeader = new Text("Ingredients");
                 nodes.add(ingredientHeader);
-                ingredientHeader.getStyleClass().add("sectionHeader");
-                //ingredientHeader.wrappingWidthProperty().bind(root.widthProperty().multiply(0.9));
+                ingredientHeader.getStyleClass().add ("sectionHeader");
+                ingredientHeader.wrappingWidthProperty().bind(root.widthProperty().multiply(0.9));
                 ingredientHeader.setTextAlignment(TextAlignment.CENTER);
                 VBox ingredientsPane = new VBox();
                 List<Ingredient> recipeIngredients = recipe.getIngredients();
@@ -453,9 +494,9 @@ public class TouchlessCooking1 extends Application {
                     ingredientsPane.getChildren().add(ingredient);
                     if(i == readIndex) {
                         ingredient.getStyleClass().add("focused");
-                        ingredient.setFont(Font.font("Times New Roman", FontWeight.EXTRA_BOLD, 24));
+                        ingredient.setFont(Font.font("Times New Roman", FontWeight.EXTRA_BOLD, 30));
                     } else {
-                        ingredient.setFont(Font.font("Times New Roman", FontWeight.NORMAL, 20));
+                        ingredient.setFont(Font.font("Times New Roman", FontWeight.NORMAL, 24));
                     }
                 };
                 root.getChildren().addAll(ingredientHeader, ingredientsPane);
@@ -465,7 +506,7 @@ public class TouchlessCooking1 extends Application {
                 Text stepHeader = new Text("Steps");
                 nodes.add(stepHeader);
                 stepHeader.getStyleClass().add("sectionHeader");
-                //stepHeader.wrappingWidthProperty().bind(root.widthProperty().multiply(0.9));
+                stepHeader.wrappingWidthProperty().bind(root.widthProperty().multiply(0.9));
                 stepHeader.setTextAlignment(TextAlignment.CENTER);
                 VBox stepsPane = new VBox();
                 List<Step> recipeSteps = recipe.getSteps();
@@ -475,9 +516,9 @@ public class TouchlessCooking1 extends Application {
                     stepsPane.getChildren().add(step);
                     if(i == readIndex) {
                         step.getStyleClass().add("focused");
-                        step.setFont(Font.font("Times New Roman", FontWeight.EXTRA_BOLD, 24));
+                        step.setFont(Font.font("Times New Roman", FontWeight.EXTRA_BOLD, 30));
                     } else {
-                        step.setFont(Font.font("Times New Roman", FontWeight.NORMAL, 20));
+                        step.setFont(Font.font("Times New Roman", FontWeight.NORMAL, 24));
                     }
                 };
                 root.getChildren().addAll(stepHeader, stepsPane);
@@ -507,7 +548,7 @@ public class TouchlessCooking1 extends Application {
         timeToInt.put("an hour", 60);
         
         recipeIndexMap.put("Apple Crisp", 0);
-        recipeIndexMap.put("Apple Crisp2", 3);
+        recipeIndexMap.put("Apple Crisp (x2)", 3);
         recipeIndexMap.put("Cake", 6);
     }
     
