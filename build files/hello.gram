@@ -12,3 +12,4 @@ public <opentimer> = (Open Timer);
 public <pagenavigation> = (Previous | Next) (Page);
 public <repeat> = (Repeat);
 public <readindividual> = (Read) (Previous | Next);
+public <tableofcontents> = (Table Of Contents);

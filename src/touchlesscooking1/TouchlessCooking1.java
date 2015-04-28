@@ -61,6 +61,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 import com.sun.javafx.geom.Point2D;
+import javafx.scene.control.Hyperlink;
+import javafx.scene.control.Label;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.TextAlignment;
 
@@ -80,6 +82,7 @@ public class TouchlessCooking1 extends Application {
     LeapHandler leapHandler;
     public LEAP_EVENT lastLeapEvent = null;
     Map<String, Integer> timeToInt = new HashMap<String, Integer>();
+    Map<String, Integer> recipeIndexMap = new HashMap<String, Integer>();
     Pane timerPane = new Pane();
     Pane superRoot = new Pane();
     Thread listener;
@@ -118,7 +121,17 @@ public class TouchlessCooking1 extends Application {
         
         VBox root = new VBox(15);
         
-        renderRecipe(root, pageNumber);
+        //renderRecipe(root, pageNumber);
+        for(int i = 0; i < recipes.size(); i++) {
+            Hyperlink link = new Hyperlink(recipes.get(i).getTitle());
+            link.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent e) {
+                    setRecipe(link.getText());
+                }
+            });
+            root.getChildren().add(link);
+        }
         //cursor
         cursorNode = new Rectangle(0,0,10,10);
         cursorNode.setFill(Color.DODGERBLUE);
@@ -412,8 +425,7 @@ public class TouchlessCooking1 extends Application {
                 VBox topLeft = new VBox(10);
                 //topLeft.getChildren().add(title);
                 Text desc = new Text(recipe.getDescription());
-                nodes.add(desc);
-                //desc.setFont(new Font(18));
+                //nodes.add(desc);
                 desc.setWrappingWidth(300);
                 topLeft.getChildren().add(desc);
                 topLeft.getChildren().add(new Text("Serves " + recipe.getServes()));
@@ -431,7 +443,7 @@ public class TouchlessCooking1 extends Application {
                 Text ingredientHeader = new Text("Ingredients");
                 nodes.add(ingredientHeader);
                 ingredientHeader.getStyleClass().add("sectionHeader");
-                ingredientHeader.wrappingWidthProperty().bind(root.widthProperty().multiply(0.9));
+                //ingredientHeader.wrappingWidthProperty().bind(root.widthProperty().multiply(0.9));
                 ingredientHeader.setTextAlignment(TextAlignment.CENTER);
                 VBox ingredientsPane = new VBox();
                 List<Ingredient> recipeIngredients = recipe.getIngredients();
@@ -453,7 +465,7 @@ public class TouchlessCooking1 extends Application {
                 Text stepHeader = new Text("Steps");
                 nodes.add(stepHeader);
                 stepHeader.getStyleClass().add("sectionHeader");
-                stepHeader.wrappingWidthProperty().bind(root.widthProperty().multiply(0.9));
+                //stepHeader.wrappingWidthProperty().bind(root.widthProperty().multiply(0.9));
                 stepHeader.setTextAlignment(TextAlignment.CENTER);
                 VBox stepsPane = new VBox();
                 List<Step> recipeSteps = recipe.getSteps();
@@ -493,6 +505,30 @@ public class TouchlessCooking1 extends Application {
         timeToInt.put("fifty", 50);
         timeToInt.put("sixty", 60);
         timeToInt.put("an hour", 60);
+        
+        recipeIndexMap.put("Apple Crisp", 0);
+        recipeIndexMap.put("Apple Crisp2", 3);
+        recipeIndexMap.put("Cake", 6);
+    }
+    
+    private void setRecipe(String text) {
+        pageNumber = recipeIndexMap.get(text);
+        Recipe currentRecipe = recipes.get(pageNumber / 3);
+            switch(pageNumber % 3) {
+                case 1:
+                    tts.say(currentRecipe.getIngredients().get(readIndex).toString());
+                    break;
+                case 2:
+                    tts.say(currentRecipe.getSteps().get(readIndex).toString());
+                    break;
+            }
+            Pane superRoot = new Pane();
+            VBox root = new VBox(15);            
+            renderRecipe(root, pageNumber);
+            superRoot.getChildren().add(root);
+            Scene scene = new Scene(superRoot, sceneWidth, sceneHeight);
+            scene.getStylesheets().add("/css/stylesheet.css");
+            mainStage.setScene(scene);
     }
     
     @Override

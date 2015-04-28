@@ -62,7 +62,7 @@
         </steps>
     </recipe>
     <recipe>
-        <title>Peach Pie</title>
+        <title>Apple Crisp2</title>
         <description>
             Apples, cinnamon, brown sugar, butter and oats? Welcome to the essential ingredients of the apple crisp, one of the most simple and easy of apple desserts. To make an apple crisp one layers sliced peeled apples that have been tossed with lemon juice and vanilla in a baking pan, then tops the apples with a mixture of brown sugar, butter, cinnamon and oats. It’s the crunchy topping that makes the apple crisp “crisp”.
         </description>
@@ -79,7 +79,7 @@
                 <details></details>
             </ingredient>
             <ingredient>
-                <amount>1 teaspoon2</amount>
+                <amount>1 teaspoon</amount>
                 <item>vanilla</item>
                 <details></details>
             </ingredient>
@@ -120,6 +120,44 @@
             <step>
                 <mumber>4</mumber>
                 <text>Bake 45 minutes or until topping looks crunchy and apples are tender.</text>
+            </step>
+        </steps>
+    </recipe>
+    <recipe>
+        <title>Cake</title>
+        <description>
+            Party Rainbow Chip
+        </description>
+        <serves>24</serves>
+        <ingredients>
+            <ingredient>
+                <amount>1 cup</amount>
+                <item>Water</item>
+                <details></details>
+            </ingredient>
+            <ingredient>
+                <amount>1/2 cup</amount>
+                <item>Vegetable oil</item>
+                <details></details>
+            </ingredient>
+            <ingredient>
+                <amount>3</amount>
+                <item>eggs</item>
+                <details></details>
+            </ingredient>
+        </ingredients>
+        <steps>
+            <step>
+                <number>1</number>
+                <text>Heat your oven to 350 degrees Farenheit if you have a shiny metal or glass pan or 325 degrees Farenheit for a dark or nonstick pan. Grease bottom only of a 13''x9'' pan or the bottom and sides of all other pans.</text>
+            </step> 
+            <step>
+                <mumber>2</mumber>
+                <text>In a large bowl, beat cake mix, water, oil and eggs on low speed 30 seconds, then on medium speed 2 minutes, scraping bowl occasionally. Pour into pan.</text>
+            </step>
+            <step>
+                <mumber>3</mumber>
+                <text>Bake as directed in the chart or until a toothpick inserted in the center comes out clean. Cool 10 minutes before removing from pan. Cool completely before frosting.</text>
             </step>
         </steps>
     </recipe>
