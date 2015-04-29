@@ -223,114 +223,120 @@ public class TouchlessCooking1 extends Application {
         } else if(command.equals("previous page")) {
             goToPrevPage();
         } else if(command.startsWith("set timer")) {
-            String[] words = command.split(" ");
-            String time = words[3];
-            time += (words.length == 6) ? " " + words[4] : "";
-            System.out.println(time);
-            displayTimer(superRoot, timeToInt.get(time));
-            if(!superRoot.getChildren().contains(timerPane)) {
-                superRoot.getChildren().add(timerPane);
-                timerShowing = true;
-            }
+//                String[] words = command.split(" ");
+//                String time = words[3];
+//                time += (words.length == 6) ? " " + words[4] : "";
+//                System.out.println(time);
+//                displayTimer(superRoot, timeToInt.get(time));
+//                if(!superRoot.getChildren().contains(timerPane)) {
+//                    superRoot.getChildren().add(timerPane);
+//                    timerShowing = true;
+//                }
         } else if(command.equals("close timer")) {
-            superRoot.getChildren().remove(timerPane);
-            timerShowing = false;
+//                superRoot.getChildren().remove(timerPane);
+//                timerShowing = false;
         } else if(command.equals("repeat")) {
-            Recipe currentRecipe = recipes.get(pageNumber / 3);
-            switch(pageNumber % 3) {
-                case 1:
-                    tts.say(currentRecipe.getIngredients().get(readIndex).toString());
-                    break;
-                case 2:
-                    tts.say(currentRecipe.getSteps().get(readIndex).toString());
-                    break;
+            if(!tableofcontents) {
+                Recipe currentRecipe = recipes.get(pageNumber / 3);
+                switch(pageNumber % 3) {
+                    case 1:
+                        tts.say(currentRecipe.getIngredients().get(readIndex).toString());
+                        break;
+                    case 2:
+                        tts.say(currentRecipe.getSteps().get(readIndex).toString());
+                        break;
+                }
             }
         } else if(command.startsWith("go to")){
-            
-        } else if(command.startsWith("read")) {
-            String whatToRead = command.split(" ")[1];
-            Recipe currentRecipe = recipes.get(pageNumber / 3);
-            if(whatToRead.equals("next")) {
-                switch(pageNumber % 3) {
-                    case 1:
-                        if(readIndex < currentRecipe.getIngredients().size() - 1) {
-                            readIndex++;
-                            Pane superRoot = new Pane();
-                            VBox root = new VBox(15);            
-                            renderRecipe(root, pageNumber);
-                            superRoot.getChildren().add(root);
-                            Scene scene = new Scene(superRoot, sceneWidth, sceneHeight);
-                            scene.getStylesheets().add("/css/stylesheet.css");
-                            mainStage.setScene(scene);
-                        }
-                        tts.say(currentRecipe.getIngredients().get(readIndex).toString());
-                        break;
-                    case 2:
-                        if(readIndex < currentRecipe.getSteps().size() - 1) {
-                            readIndex++;
-                            Pane superRoot = new Pane();
-                            VBox root = new VBox(15);            
-                            renderRecipe(root, pageNumber);
-                            superRoot.getChildren().add(root);
-                            Scene scene = new Scene(superRoot, sceneWidth, sceneHeight);
-                            scene.getStylesheets().add("/css/stylesheet.css");
-                            mainStage.setScene(scene);
-                        }
-                        tts.say(currentRecipe.getSteps().get(readIndex).toString());
-                        break;
-                }    
-            } else if(whatToRead.equals("previous")) {
-                switch(pageNumber % 3) {
-                    case 1:
-                        if(readIndex > 0) {
-                            readIndex--;
-                            Pane superRoot = new Pane();
-                            VBox root = new VBox(15);            
-                            renderRecipe(root, pageNumber);
-                            superRoot.getChildren().add(root);
-                            Scene scene = new Scene(superRoot, sceneWidth, sceneHeight);
-                            scene.getStylesheets().add("/css/stylesheet.css");
-                            mainStage.setScene(scene);
-                        }
-                        tts.say(currentRecipe.getIngredients().get(readIndex).toString());
-                        break;
-                    case 2:
-                        if(readIndex > 0) {
-                            readIndex--;
-                            Pane superRoot = new Pane();
-                            VBox root = new VBox(15);            
-                            renderRecipe(root, pageNumber);
-                            superRoot.getChildren().add(root);
-                            Scene scene = new Scene(superRoot, sceneWidth, sceneHeight);
-                            scene.getStylesheets().add("/css/stylesheet.css");
-                            mainStage.setScene(scene);
-                        }
-                        tts.say(currentRecipe.getSteps().get(readIndex).toString());
-                        break;
-                }
-            } else {
-                switch(pageNumber % 3) {
-                    case 1:
-                        List<Ingredient> ingredients = currentRecipe.getIngredients();
-                        String ingredientsToRead = "";
-                        for(int i = 0; i < ingredients.size(); i++) {
-                            ingredientsToRead += ingredients.get(i).toString() + " ";
-                        }
-                        tts.say(ingredientsToRead);
-                        break;
-                    case 2:
-                        List<Step> steps = currentRecipe.getSteps();
-                        String stepsToRead = "";
-                        for(int i = 0; i < steps.size(); i++) {
-                            stepsToRead += steps.get(i).toString() + " ";
-                        }
-                        tts.say(stepsToRead);
-                        tts.say(currentRecipe.getSteps().get(readIndex).toString());
-                        break;
-                }
+            if(tableofcontents) {
+                
             }
-            superRoot.getChildren().remove(timerPane);
-            timerShowing = false;
+        } else if(command.startsWith("read")) {
+            if(!tableofcontents) {
+                String whatToRead = command.split(" ")[1];
+                Recipe currentRecipe = recipes.get(pageNumber / 3);
+                if(whatToRead.equals("next")) {
+                    switch(pageNumber % 3) {
+                        case 1:
+                            if(readIndex < currentRecipe.getIngredients().size() - 1) {
+                                readIndex++;
+                                Pane superRoot = new Pane();
+                                VBox root = new VBox(15);            
+                                renderRecipe(root, pageNumber);
+                                superRoot.getChildren().add(root);
+                                Scene scene = new Scene(superRoot, sceneWidth, sceneHeight);
+                                scene.getStylesheets().add("/css/stylesheet.css");
+                                mainStage.setScene(scene);
+                            }
+                            tts.say(currentRecipe.getIngredients().get(readIndex).toString());
+                            break;
+                        case 2:
+                            if(readIndex < currentRecipe.getSteps().size() - 1) {
+                                readIndex++;
+                                Pane superRoot = new Pane();
+                                VBox root = new VBox(15);            
+                                renderRecipe(root, pageNumber);
+                                superRoot.getChildren().add(root);
+                                Scene scene = new Scene(superRoot, sceneWidth, sceneHeight);
+                                scene.getStylesheets().add("/css/stylesheet.css");
+                                mainStage.setScene(scene);
+                            }
+                            tts.say(currentRecipe.getSteps().get(readIndex).toString());
+                            break;
+                    }    
+                } else if(whatToRead.equals("previous")) {
+                    switch(pageNumber % 3) {
+                        case 1:
+                            if(readIndex > 0) {
+                                readIndex--;
+                                Pane superRoot = new Pane();
+                                VBox root = new VBox(15);            
+                                renderRecipe(root, pageNumber);
+                                superRoot.getChildren().add(root);
+                                Scene scene = new Scene(superRoot, sceneWidth, sceneHeight);
+                                scene.getStylesheets().add("/css/stylesheet.css");
+                                mainStage.setScene(scene);
+                            }
+                            tts.say(currentRecipe.getIngredients().get(readIndex).toString());
+                            break;
+                        case 2:
+                            if(readIndex > 0) {
+                                readIndex--;
+                                Pane superRoot = new Pane();
+                                VBox root = new VBox(15);            
+                                renderRecipe(root, pageNumber);
+                                superRoot.getChildren().add(root);
+                                Scene scene = new Scene(superRoot, sceneWidth, sceneHeight);
+                                scene.getStylesheets().add("/css/stylesheet.css");
+                                mainStage.setScene(scene);
+                            }
+                            tts.say(currentRecipe.getSteps().get(readIndex).toString());
+                            break;
+                    }
+                } else {
+                    switch(pageNumber % 3) {
+                        case 1:
+                            List<Ingredient> ingredients = currentRecipe.getIngredients();
+                            String ingredientsToRead = "";
+                            for(int i = 0; i < ingredients.size(); i++) {
+                                ingredientsToRead += ingredients.get(i).toString() + " ";
+                            }
+                            tts.say(ingredientsToRead);
+                            break;
+                        case 2:
+                            List<Step> steps = currentRecipe.getSteps();
+                            String stepsToRead = "";
+                            for(int i = 0; i < steps.size(); i++) {
+                                stepsToRead += steps.get(i).toString() + " ";
+                            }
+                            tts.say(stepsToRead);
+                            tts.say(currentRecipe.getSteps().get(readIndex).toString());
+                            break;
+                    }
+                }
+                superRoot.getChildren().remove(timerPane);
+                timerShowing = false;
+            }
         } else if(command.equals("table of contents")) {
             tableofcontents = true;
             Pane superRoot = new Pane();
@@ -484,13 +490,14 @@ public class TouchlessCooking1 extends Application {
                 Text ingredientHeader = new Text("Ingredients");
                 nodes.add(ingredientHeader);
                 ingredientHeader.getStyleClass().add ("sectionHeader");
-                ingredientHeader.wrappingWidthProperty().bind(root.widthProperty().multiply(0.9));
+                //ingredientHeader.wrappingWidthProperty().bind(root.widthProperty().multiply(0.9));
                 ingredientHeader.setTextAlignment(TextAlignment.CENTER);
                 VBox ingredientsPane = new VBox();
                 List<Ingredient> recipeIngredients = recipe.getIngredients();
                 for(int i = 0; i < recipeIngredients.size(); i++) {
                     Text ingredient = new Text(recipeIngredients.get(i).toString());
                     nodes.add(ingredient);
+                    ingredient.wrappingWidthProperty().bind(ingredientsPane.widthProperty());
                     ingredientsPane.getChildren().add(ingredient);
                     if(i == readIndex) {
                         ingredient.getStyleClass().add("focused");
@@ -506,13 +513,14 @@ public class TouchlessCooking1 extends Application {
                 Text stepHeader = new Text("Steps");
                 nodes.add(stepHeader);
                 stepHeader.getStyleClass().add("sectionHeader");
-                stepHeader.wrappingWidthProperty().bind(root.widthProperty().multiply(0.9));
-                stepHeader.setTextAlignment(TextAlignment.CENTER);
+                //stepHeader.wrappingWidthProperty().bind(root.widthProperty().multiply(0.9));
+                //stepHeader.setTextAlignment(TextAlignment.CENTER);
                 VBox stepsPane = new VBox();
                 List<Step> recipeSteps = recipe.getSteps();
                 for(int i = 0; i < recipeSteps.size(); i++) {
                     Text step = new Text(recipeSteps.get(i).toString());
                     nodes.add(step);
+                    step.wrappingWidthProperty().bind(stepsPane.widthProperty());
                     stepsPane.getChildren().add(step);
                     if(i == readIndex) {
                         step.getStyleClass().add("focused");
