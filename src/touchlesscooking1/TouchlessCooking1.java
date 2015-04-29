@@ -77,6 +77,7 @@ public class TouchlessCooking1 extends Application {
     List<Recipe> recipes;
     List<Text> nodes = new ArrayList<Text>();
     boolean timerShowing = false, tableofcontents = true;
+    List<Hyperlink> tofHyperlinks;
     int pageNumber = 0, readIndex = 0;
     LeapManager manager;
     LeapHandler leapHandler;
@@ -122,6 +123,7 @@ public class TouchlessCooking1 extends Application {
         VBox root = new VBox(15);
         
         //renderRecipe(root, pageNumber);
+        tofHyperlinks = new ArrayList<Hyperlink>();
         for(int i = 0; i < recipes.size(); i++) {
             Hyperlink link = new Hyperlink(recipes.get(i).getTitle());
             link.setFont(new Font(36));
@@ -132,6 +134,7 @@ public class TouchlessCooking1 extends Application {
                     setRecipe(link.getText());
                 }
             });
+            tofHyperlinks.add(link);
             root.getChildren().add(link);
         }
         //cursor
@@ -222,6 +225,21 @@ public class TouchlessCooking1 extends Application {
             goToNextPage();
         } else if(command.equals("previous page")) {
             goToPrevPage();
+        } else if (command.equals("go to link")) {
+        	if (tableofcontents) {
+        		System.out.println("checking hyperlinks");
+        		// check intersection between cursor and hyperlinks
+        		Bounds cursorLocalBounds = cursorNode.getBoundsInLocal();
+        		Bounds cursorScreenBounds = cursorNode.localToScreen(cursorLocalBounds);
+        		for (int i = 0; i < 1;i++) {//tofHyperlinks.size(); i++) {
+        			Hyperlink link = tofHyperlinks.get(i);
+        			Bounds linkLocalBounds = link.getBoundsInLocal();
+        			Bounds linkScreenBounds = link.localToScreen(linkLocalBounds);
+        			if (linkScreenBounds.intersects(cursorScreenBounds)) {
+        				link.fire();
+        			}
+        		}
+        	}
         } else if(command.startsWith("set timer")) {
 //                String[] words = command.split(" ");
 //                String time = words[3];
