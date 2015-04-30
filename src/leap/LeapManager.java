@@ -152,7 +152,7 @@ public class LeapManager {
 				float newRotation = 0.0F;
 				for (int i = 0; i < hands.count(); i++) {
 					Hand hand = hands.get(i);
-					if (hand.id() == rotationRefHand.id() && hand.pinchStrength() > .7) {
+					if (hand.id() == rotationRefHand.id() && hand.pinchStrength() > .8) {
 						newRotation = hand.rotationAngle(rotationRefFrame, Vector.zAxis());
 					}
 				}
@@ -166,7 +166,7 @@ public class LeapManager {
 			}
 		} else {
 			for (int i = 0; i < hands.count(); i++) {
-				if (hands.get(i).pinchStrength() > .7) {
+				if (hands.get(i).pinchStrength() > .8) {
 					rotationRefFrame = frame;
 					rotationRefHand = hands.get(i);
 					currentState = LEAP_STATE.IS_ROTATING;
@@ -324,7 +324,7 @@ public class LeapManager {
 				if (hands.count() == 1) {
 					Hand hand = hands.get(0);
 					zoomMultiplier = prevZoomMultiplier * (float) Math.max(0.3, 1. - (zoomGrabRef.getZ() - hand.palmPosition().getZ())*zoomGrabSensitivity);
-					if (hand.pinchStrength() < .7 || hand.pointables().extended().count() > 0) {
+					if (hand.pinchStrength() < .8 || hand.pointables().extended().count() > 0) {
 						isZooming1Hand = false;
 						currentState = LEAP_STATE.NONE;
 						fireEvent(LEAP_EVENT.END_ZOOM);
@@ -360,7 +360,7 @@ public class LeapManager {
 			// zooming using 1 hand
 			if (hands.count() == 1) {
 				Hand hand = hands.get(0);
-				if (hand.pinchStrength() > .7 && hand.pointables().extended().count() == 0) {
+				if (hand.pinchStrength() > .8 && hand.pointables().extended().count() == 0) {
 					isZooming1Hand = true;
 					zoomGrabRef = hand.palmPosition();
 					prevZoomMultiplier = zoomMultiplier;

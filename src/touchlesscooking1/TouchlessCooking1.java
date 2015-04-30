@@ -392,7 +392,7 @@ public class TouchlessCooking1 extends Application {
         } else if (lastLeapEvent != null) {
         	if (lastLeapEvent == LEAP_EVENT.END_NEXT_PAGE)
                     goToNextPage();
-        	else if (lastLeapEvent == LEAP_EVENT.END_NEXT_PAGE)
+        	else if (lastLeapEvent == LEAP_EVENT.END_PREV_PAGE)
                     goToPrevPage();
         	// more leap events possible
         	lastLeapEvent = null;
