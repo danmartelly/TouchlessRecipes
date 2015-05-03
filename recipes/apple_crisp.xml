@@ -1,68 +1,50 @@
 <recipes>
     <recipe>
-        <title>Apple Crisp</title>
+        <title>Eggs</title>
         <description>
-            Apples, cinnamon, brown sugar, butter and oats? Welcome to the essential ingredients of the apple crisp, one of the most simple and easy of apple desserts. To make an apple crisp one layers sliced peeled apples that have been tossed with lemon juice and vanilla in a baking pan, then tops the apples with a mixture of brown sugar, butter, cinnamon and oats. It’s the crunchy topping that makes the apple crisp “crisp”.
+            A nice change from regular scrambled eggs. These eggs come out creamy and soft. Perfect with a slice of tomato and turkey bacon for a delicious and fast low-carb breakfast.
         </description>
-        <serves>8</serves>
+        <serves>2</serves>
         <ingredients>
             <ingredient>
-                <amount>7</amount>
-                <item>tart apples</item>
-                <details>peeled, cored and sliced</details>
-            </ingredient>
-            <ingredient>
-                <amount>4 teaspoons</amount>
-                <item>fresh lemon juice</item>
-                <details></details>
-            </ingredient>
-            <ingredient>
-                <amount>1/2 teaspoon</amount>
-                <item>vanilla</item>
-                <details></details>
-            </ingredient>
-            <ingredient>
-                <amount>1 cup</amount>
-                <item>brown sugar</item>
-                <details></details>
-            </ingredient>
-            <ingredient>
-                <amount>1/2 teaspoon</amount>
-                <item>ground cinnamon</item>
-                <details></details>
-            </ingredient>
-            <ingredient>
-                <amount>1 cup</amount>
-                <item>rolled oats</item>
-                <details></details>
-            </ingredient>
-            <ingredient>
-                <amount>1/2 cup</amount>
+                <amount>1 tablespoon</amount>
                 <item>butter</item>
-                <details>room temperature</details>
+                <details></details>
+            </ingredient>
+            <ingredient>
+                <amount>4</amount>
+                <item>eggs</item>
+                <details>broken</details>
+            </ingredient>
+            <ingredient>
+                <amount>1/4 cup</amount>
+                <item>cottage cheese</item>
+                <details></details>
+            </ingredient>
+            <ingredient>
+                <amount>Some</amount>
+                <item>ground pepper</item>
+                <details></details>
+            </ingredient>
+            <ingredient>
+                <amount>1 teaspoon</amount>
+                <item>fresh chives</item>
+                <details>chopped</details>
             </ingredient>
         </ingredients>
         <steps>
             <step>
                 <number>1</number>
-                <text>Preheat oven to 375°F. In a mixing bowl, combine apples, lemon juice, and vanilla. Toss to combine.</text>
+                <text>Melt butter in a skillet over medium heat. Pour beaten eggs into the skillet; let cook undisturbed until the bottom of the eggs begin to firm, 1 to 2 minutes.</text>
             </step> 
             <step>
                 <mumber>2</mumber>
-                <text>Layer sliced apples in a 9 x 12-inch (or approximately the same size) baking pan.</text>
-            </step>
-            <step>
-                <mumber>3</mumber>
-                <text>Combine brown sugar, cinnamon, and oatmeal in a bowl. Cut in the butter. Sprinkle sugar mixture over apples.</text>
-            </step>
-            <step>
-                <mumber>4</mumber>
-                <text>Bake 45 minutes or until topping looks crunchy and apples are tender.</text>
+                <text>Stir cottage cheese and chives into eggs and season with black pepper. Cook and stir until eggs are nearly set, 3 to 4 minutes more.</text>
             </step>
         </steps>
     </recipe>
     <recipe>
-        <title>Apple Crisp2</title>
+        <title>Apple Crisp (x2)</title>
         <description>
             Apples, cinnamon, brown sugar, butter and oats? Welcome to the essential ingredients of the apple crisp, one of the most simple and easy of apple desserts. To make an apple crisp one layers sliced peeled apples that have been tossed with lemon juice and vanilla in a baking pan, then tops the apples with a mixture of brown sugar, butter, cinnamon and oats. It’s the crunchy topping that makes the apple crisp “crisp”.
         </description>
@@ -143,6 +125,11 @@
             <ingredient>
                 <amount>3</amount>
                 <item>eggs</item>
+                <details></details>
+            </ingredient>
+            <ingredient>
+                <amount>1 box</amount>
+                <item>cake mix</item>
                 <details></details>
             </ingredient>
         </ingredients>
