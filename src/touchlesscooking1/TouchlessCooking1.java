@@ -124,9 +124,14 @@ public class TouchlessCooking1 extends Application {
         
         //renderRecipe(root, pageNumber);
         tofHyperlinks = new ArrayList<Hyperlink>();
+        Text title = new Text("Table of Contents");
+        title.getStyleClass().add("title");
+        root.getChildren().add(title);
+        title.setTextAlignment(TextAlignment.CENTER);
         for(int i = 0; i < recipes.size(); i++) {
             Hyperlink link = new Hyperlink(recipes.get(i).getTitle());
             link.setFont(new Font(36));
+            link.setStyle("-fx-text-decoration: none");
             link.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent e) {
@@ -225,7 +230,7 @@ public class TouchlessCooking1 extends Application {
             goToNextPage();
         } else if(command.equals("previous page")) {
             goToPrevPage();
-        } else if (command.equals("go to link")) {
+        } else if (command.equals("computer go to link")) {
         	if (tableofcontents) {
         		System.out.println("checking hyperlinks");
         		// check intersection between cursor and hyperlinks
@@ -253,7 +258,7 @@ public class TouchlessCooking1 extends Application {
         } else if(command.equals("close timer")) {
 //                superRoot.getChildren().remove(timerPane);
 //                timerShowing = false;
-        } else if(command.equals("repeat")) {
+        } else if(command.equals("computer repeat")) {
             if(!tableofcontents) {
                 Recipe currentRecipe = recipes.get(pageNumber / 3);
                 switch(pageNumber % 3) {
@@ -363,6 +368,7 @@ public class TouchlessCooking1 extends Application {
             for(int i = 0; i < recipes.size(); i++) {
                 Hyperlink link = new Hyperlink(recipes.get(i).getTitle());
                 link.setFont(new Font(36));
+                link.setStyle("-fx-text-decoration: none");
                 link.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent e) {
@@ -387,7 +393,8 @@ public class TouchlessCooking1 extends Application {
         if (manager.getCurrentState() == LEAP_STATE.IS_ZOOMING) {
             float zoomMultiplier = manager.getZoomMultiplier();
             for(Text node: nodes) {
-                node.setFont(new Font((int)(12 * zoomMultiplier)));
+                int size = (int)node.getFont().getSize();
+                node.setFont(new Font((int)(size * zoomMultiplier)));
             }
         } else if (manager.getCurrentState() == LEAP_STATE.IS_ROTATING) {
         	float rotationDelta = manager.getRotation();
@@ -490,14 +497,27 @@ public class TouchlessCooking1 extends Application {
                 VBox topLeft = new VBox(10);
                 //topLeft.getChildren().add(title);
                 Text desc = new Text(recipe.getDescription());
-                //nodes.add(desc);
+                nodes.add(desc);
                 desc.setWrappingWidth(300);
                 topLeft.getChildren().add(desc);
-                topLeft.getChildren().add(new Text("Serves " + recipe.getServes()));
+                Text serves = new Text("Serves " + recipe.getServes());
+                nodes.add(serves);
+                topLeft.getChildren().add(serves);
                 topLeft.getStyleClass().add("topPane");
 
                 top.getChildren().add(topLeft);
                 Image image = new Image("images/eggs.jpg");
+                switch(pageNumber / 3) {
+                    case 0:
+                        image = new Image("images/eggs.jpg");
+                        break;
+                    case 1:
+                        image = new Image("images/applecrisp.jpg");
+                        break;
+                    case 2:
+                        image = new Image("images/cake.jpg");
+                        break;
+                }
                 ImageView finalImage = new ImageView(image);
                 finalImage.getStyleClass().add("topPane");
                 top.getChildren().add(finalImage);
@@ -538,7 +558,7 @@ public class TouchlessCooking1 extends Application {
                 for(int i = 0; i < recipeSteps.size(); i++) {
                     Text step = new Text(recipeSteps.get(i).toString());
                     nodes.add(step);
-                    step.wrappingWidthProperty().bind(stepsPane.widthProperty());
+                    step.setWrappingWidth(600);
                     stepsPane.getChildren().add(step);
                     if(i == readIndex) {
                         step.getStyleClass().add("focused");
@@ -550,6 +570,11 @@ public class TouchlessCooking1 extends Application {
                 root.getChildren().addAll(stepHeader, stepsPane);
                 break;
         }
+        //cursor
+        cursorNode = new Rectangle(0,0,10,10);
+        cursorNode.setFill(Color.DODGERBLUE);
+
+        root.getChildren().add(cursorNode);
     }
     
     public void initializeMap() {
@@ -573,7 +598,7 @@ public class TouchlessCooking1 extends Application {
         timeToInt.put("sixty", 60);
         timeToInt.put("an hour", 60);
         
-        recipeIndexMap.put("Apple Crisp", 0);
+        recipeIndexMap.put("Eggs", 0);
         recipeIndexMap.put("Apple Crisp (x2)", 3);
         recipeIndexMap.put("Cake", 6);
     }

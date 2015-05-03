@@ -1,15 +1,22 @@
 .title {
-    -fx-font: 36px serif;
+    -fx-font: 72px serif;
+    color: blue;
 }
 
 .topPane {
     -fx-width: 50%;
+    -fx-font: 18px sans-serif;
 }
 
 .sectionHeader {
-    -fx-font: large bold;
+    -fx-align: center;
+    -fx-font: 40px serif;
 }
 
 .timer {
     z-index: 5;
+}
+
+.focused {
+    background: #007FFF;
 }
