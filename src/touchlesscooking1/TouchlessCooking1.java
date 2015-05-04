@@ -230,7 +230,7 @@ public class TouchlessCooking1 extends Application {
             goToNextPage();
         } else if(command.equals("previous page")) {
             goToPrevPage();
-        } else if (command.equals("computer go to link")) {
+        } else if (command.equals("tee see go to link")) {
         	if (tableofcontents) {
         		System.out.println("checking hyperlinks");
         		// check intersection between cursor and hyperlinks
@@ -258,7 +258,7 @@ public class TouchlessCooking1 extends Application {
         } else if(command.equals("close timer")) {
 //                superRoot.getChildren().remove(timerPane);
 //                timerShowing = false;
-        } else if(command.equals("computer repeat")) {
+        } else if(command.equals("tee see repeat")) {
             if(!tableofcontents) {
                 Recipe currentRecipe = recipes.get(pageNumber / 3);
                 switch(pageNumber % 3) {
@@ -405,7 +405,7 @@ public class TouchlessCooking1 extends Application {
         } else if (lastLeapEvent != null) {
         	if (lastLeapEvent == LEAP_EVENT.END_NEXT_PAGE)
                     goToNextPage();
-        	else if (lastLeapEvent == LEAP_EVENT.END_PREV_PAGE)
+        	else if (lastLeapEvent == LEAP_EVENT.END_NEXT_PAGE)
                     goToPrevPage();
         	// more leap events possible
         	lastLeapEvent = null;
