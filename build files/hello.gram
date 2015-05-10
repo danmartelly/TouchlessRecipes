@@ -6,8 +6,8 @@
 
 grammar hello;
 
-public <gotolink> = (Touchless See Go To Link);
-public <pagenavigation> = (Touchless) (Previous | Next) (Page);
-public <repeat> = (Touchless Repeat);
-public <readindividual> = (Touchless) (Read) (Previous | Next);
-public <tableofcontents> = (Touchless) (Table Of Contents);
+public <gotolink> = (Touch Less Go To Link);
+public <pagenavigation> = (Touch Less) (Previous | Next) (Page);
+public <repeat> = (Touch Less Repeat);
+public <readindividual> = (Touch Less) (Read) (Previous | Next);
+public <tableofcontents> = (Touch Less) (Table Of Contents);

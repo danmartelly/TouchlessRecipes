@@ -71,14 +71,14 @@ import tts.TTS;
 
 public class TouchlessCooking1 extends Application {
 
-    String newCommand = "";
+    String newCommand = "", lastCommand = "";
     int sceneWidth = 600, sceneHeight = 500;
     Stage mainStage;
     List<Recipe> recipes;
     List<Text> nodes = new ArrayList<Text>();
     boolean timerShowing = false, tableofcontents = true;
     List<Hyperlink> tofHyperlinks;
-    int pageNumber = 0, readIndex = 0;
+    int pageNumber = 0, readIndex = 0, timesRepeated = 0;
     LeapManager manager;
     LeapHandler leapHandler;
     public LEAP_EVENT lastLeapEvent = null;
@@ -217,6 +217,15 @@ public class TouchlessCooking1 extends Application {
     public void handle(String command){
         System.out.printf("Command: %s received\n", command);
         newCommand = command;
+        if(newCommand.equals(lastCommand) && newCommand.equals("touchless repeat")) {
+            timesRepeated++;
+            if(timesRepeated > 3) {
+                newCommand = "";
+            }
+        } else {
+            timesRepeated = 0;
+        }
+        lastCommand = command;
     }
     
     public void updateLeapEvent(LEAP_EVENT event) {
@@ -226,25 +235,25 @@ public class TouchlessCooking1 extends Application {
     public void react() {
         String command = newCommand.substring(0);
         newCommand  = "";
-        if(command.equals("next page")) {
+        if(command.equals("touch less next page")) {
             goToNextPage();
-        } else if(command.equals("previous page")) {
+        } else if(command.equals("touch less previous page")) {
             goToPrevPage();
-        } else if (command.equals("tee see go to link")) {
-        	if (tableofcontents) {
-        		System.out.println("checking hyperlinks");
-        		// check intersection between cursor and hyperlinks
-        		Bounds cursorLocalBounds = cursorNode.getBoundsInLocal();
-        		Bounds cursorScreenBounds = cursorNode.localToScreen(cursorLocalBounds);
-        		for (int i = 0; i < 1;i++) {//tofHyperlinks.size(); i++) {
-        			Hyperlink link = tofHyperlinks.get(i);
-        			Bounds linkLocalBounds = link.getBoundsInLocal();
-        			Bounds linkScreenBounds = link.localToScreen(linkLocalBounds);
-        			if (linkScreenBounds.intersects(cursorScreenBounds)) {
-        				link.fire();
-        			}
-        		}
-        	}
+        } else if (command.equals("touch less go to link")) {
+            if (tableofcontents) {
+                System.out.println("checking hyperlinks");
+                // check intersection between cursor and hyperlinks
+                Bounds cursorLocalBounds = cursorNode.getBoundsInLocal();
+                Bounds cursorScreenBounds = cursorNode.localToScreen(cursorLocalBounds);
+                for (int i = 0; i < 1;i++) {//tofHyperlinks.size(); i++) {
+                        Hyperlink link = tofHyperlinks.get(i);
+                        Bounds linkLocalBounds = link.getBoundsInLocal();
+                        Bounds linkScreenBounds = link.localToScreen(linkLocalBounds);
+                        if (linkScreenBounds.intersects(cursorScreenBounds)) {
+                                link.fire();
+                        }
+                }
+            }
         } else if(command.startsWith("set timer")) {
 //                String[] words = command.split(" ");
 //                String time = words[3];
@@ -258,7 +267,7 @@ public class TouchlessCooking1 extends Application {
         } else if(command.equals("close timer")) {
 //                superRoot.getChildren().remove(timerPane);
 //                timerShowing = false;
-        } else if(command.equals("tee see repeat")) {
+        } else if(command.equals("touch less repeat")) {
             if(!tableofcontents) {
                 Recipe currentRecipe = recipes.get(pageNumber / 3);
                 switch(pageNumber % 3) {
@@ -270,13 +279,13 @@ public class TouchlessCooking1 extends Application {
                         break;
                 }
             }
-        } else if(command.startsWith("go to")){
+        } else if(command.startsWith("touch less go to")){
             if(tableofcontents) {
                 
             }
-        } else if(command.startsWith("read")) {
+        } else if(command.startsWith("touch less read")) {
             if(!tableofcontents) {
-                String whatToRead = command.split(" ")[1];
+                String whatToRead = command.split(" ")[2];
                 Recipe currentRecipe = recipes.get(pageNumber / 3);
                 if(whatToRead.equals("next")) {
                     switch(pageNumber % 3) {
