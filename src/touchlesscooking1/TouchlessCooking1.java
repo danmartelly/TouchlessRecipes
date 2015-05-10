@@ -245,12 +245,14 @@ public class TouchlessCooking1 extends Application {
                 // check intersection between cursor and hyperlinks
                 Bounds cursorLocalBounds = cursorNode.getBoundsInLocal();
                 Bounds cursorScreenBounds = cursorNode.localToScreen(cursorLocalBounds);
-                for (int i = 0; i < 1;i++) {//tofHyperlinks.size(); i++) {
+                for (int i = 0; i < tofHyperlinks.size(); i++) {
                         Hyperlink link = tofHyperlinks.get(i);
                         Bounds linkLocalBounds = link.getBoundsInLocal();
                         Bounds linkScreenBounds = link.localToScreen(linkLocalBounds);
                         if (linkScreenBounds.intersects(cursorScreenBounds)) {
+                        		System.out.println("found hyperlink");
                                 link.fire();
+                                break;
                         }
                 }
             }
@@ -403,7 +405,8 @@ public class TouchlessCooking1 extends Application {
             float zoomMultiplier = manager.getZoomMultiplier();
             for(Text node: nodes) {
                 int size = (int)node.getFont().getSize();
-                node.setFont(new Font((int)(size * zoomMultiplier)));
+                System.out.println(size);
+                node.setFont(new Font((int)(24 * zoomMultiplier)));
             }
         } else if (manager.getCurrentState() == LEAP_STATE.IS_ROTATING) {
         	float rotationDelta = manager.getRotation();
@@ -414,7 +417,7 @@ public class TouchlessCooking1 extends Application {
         } else if (lastLeapEvent != null) {
         	if (lastLeapEvent == LEAP_EVENT.END_NEXT_PAGE)
                     goToNextPage();
-        	else if (lastLeapEvent == LEAP_EVENT.END_NEXT_PAGE)
+        	else if (lastLeapEvent == LEAP_EVENT.END_PREV_PAGE)
                     goToPrevPage();
         	// more leap events possible
         	lastLeapEvent = null;
@@ -608,7 +611,7 @@ public class TouchlessCooking1 extends Application {
         timeToInt.put("an hour", 60);
         
         recipeIndexMap.put("Eggs", 0);
-        recipeIndexMap.put("Apple Crisp (x2)", 3);
+        recipeIndexMap.put("Spell with Blocks", 3);
         recipeIndexMap.put("Cake", 6);
     }
     

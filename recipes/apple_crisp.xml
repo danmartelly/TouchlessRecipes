@@ -44,64 +44,67 @@
         </steps>
     </recipe>
     <recipe>
-        <title>Apple Crisp (x2)</title>
+        <title>Spell with Blocks</title>
         <description>
-            Apples, cinnamon, brown sugar, butter and oats? Welcome to the essential ingredients of the apple crisp, one of the most simple and easy of apple desserts. To make an apple crisp one layers sliced peeled apples that have been tossed with lemon juice and vanilla in a baking pan, then tops the apples with a mixture of brown sugar, butter, cinnamon and oats. It’s the crunchy topping that makes the apple crisp “crisp”.
+            Upon completing the recipe, the blocks provided will spell out something delicious. Thank you for participating in this study.
         </description>
-        <serves>8</serves>
+        <serves>4</serves>
         <ingredients>
             <ingredient>
-                <amount>14</amount>
-                <item>tart apples</item>
-                <details>peeled, cored and sliced</details>
-            </ingredient>
-            <ingredient>
-                <amount>8 teaspoons</amount>
-                <item>fresh lemon juice</item>
+                <amount>1</amount>
+                <item>Block 1</item>
                 <details></details>
             </ingredient>
             <ingredient>
-                <amount>1 teaspoon</amount>
-                <item>vanilla</item>
+                <amount>1</amount>
+                <item>Block 2</item>
                 <details></details>
             </ingredient>
-            <ingredient>
-                <amount>2 cup</amount>
-                <item>brown sugar</item>
+			<ingredient>
+                <amount>1</amount>
+                <item>Block 3</item>
                 <details></details>
             </ingredient>
-            <ingredient>
-                <amount>1 teaspoons</amount>
-                <item>ground cinnamon</item>
+			<ingredient>
+                <amount>1</amount>
+                <item>Block 4</item>
                 <details></details>
             </ingredient>
-            <ingredient>
-                <amount>2 cups</amount>
-                <item>rolled oats</item>
+			<ingredient>
+                <amount>1</amount>
+                <item>Block 5</item>
                 <details></details>
             </ingredient>
-            <ingredient>
-                <amount>1 cup</amount>
-                <item>butter</item>
-                <details>room temperature</details>
+			<ingredient>
+                <amount>1</amount>
+                <item>Block 6</item>
+                <details></details>
             </ingredient>
         </ingredients>
         <steps>
             <step>
                 <number>1</number>
-                <text>Preheat oven to 375°F. In a mixing bowl, combine apples, lemon juice, and vanilla. Toss to combine.</text>
+                <text>The bottom left block is number one and should have the smiley face facing you.</text>
             </step> 
             <step>
                 <mumber>2</mumber>
-                <text>Layer sliced apples in a 9 x 12-inch (or approximately the same size) baking pan.</text>
+                <text>The bottom middle block is number four and should have the two pronged shape facing you.</text>
             </step>
             <step>
                 <mumber>3</mumber>
-                <text>Combine brown sugar, cinnamon, and oatmeal in a bowl. Cut in the butter. Sprinkle sugar mixture over apples.</text>
+                <text>The bottom right block is number two and should have the plus shape facing you.</text>
             </step>
             <step>
                 <mumber>4</mumber>
-                <text>Bake 45 minutes or until topping looks crunchy and apples are tender.</text>
+                <text>The top left block is number three and should have the star facing you</text>
+            </step>
+			<step>
+                <mumber>5</mumber>
+                <text>The top middle block is number five and should have the square facing you.</text>
+            </step>
+			<step>
+                <mumber>6</mumber>
+                <text>The top right block is number six and should have the triangle facing you.</text>
             </step>
         </steps>
     </recipe>
