@@ -281,13 +281,9 @@ public class TouchlessCooking1 extends Application {
                         break;
                 }
             }
-        } else if(command.startsWith("touch less go to")){
-            if(tableofcontents) {
-                
-            }
         } else if(command.startsWith("touch less read")) {
             if(!tableofcontents) {
-                String whatToRead = command.split(" ")[2];
+                String whatToRead = command.split(" ")[3];
                 Recipe currentRecipe = recipes.get(pageNumber / 3);
                 if(whatToRead.equals("next")) {
                     switch(pageNumber % 3) {
@@ -371,7 +367,7 @@ public class TouchlessCooking1 extends Application {
                 superRoot.getChildren().remove(timerPane);
                 timerShowing = false;
             }
-        } else if(command.equals("table of contents")) {
+        } else if(command.equals("touch less table of contents")) {
             tableofcontents = true;
             Pane superRoot = new Pane();
             VBox root = new VBox(15);
