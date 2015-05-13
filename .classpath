@@ -3,15 +3,11 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="lib" path="freetts-1.2/lib/freetts.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="jars/freetts-jsapi10.jar"/>
-	<classpathentry kind="lib" path="jars/jsapi.jar"/>
-	<classpathentry kind="lib" path="jars/LeapJava.jar">
-		<attributes>
-			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="C:/Users/martelly/Documents/MIT/6.835/LeapDeveloperKit_2.2.3+25971_win/LeapSDK/lib/x64"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="jars/sphinx4.jar"/>
-	<classpathentry kind="lib" path="jars/TIDIGITS_8gau_13dCep_16k_40mel_130Hz_6800Hz.jar"/>
-	<classpathentry kind="lib" path="jars/WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Dev/Desktop/TouchlessRecipes/jars/freetts-jsapi10.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Dev/Desktop/TouchlessRecipes/jars/jsapi.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Dev/Desktop/TouchlessRecipes/jars/LeapJava.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Dev/Desktop/TouchlessRecipes/jars/sphinx4.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Dev/Desktop/TouchlessRecipes/jars/TIDIGITS_8gau_13dCep_16k_40mel_130Hz_6800Hz.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Dev/Desktop/TouchlessRecipes/jars/WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
